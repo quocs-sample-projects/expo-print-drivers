@@ -1,12 +1,28 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireNativeModule } from "expo";
 
-import { PrinterDriversModuleEvents } from './PrinterDrivers.types';
+import {
+  BluetoothDevice,
+  PrinterDriversModuleEvents,
+} from "./PrinterDrivers.types";
 
 declare class PrinterDriversModule extends NativeModule<PrinterDriversModuleEvents> {
-  PI: number;
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
+  PrinterType: {
+    WOOSIM_WSP_i350: string;
+    HONEYWELL_0188: string;
+  };
+  BluetoothConnectionState: {
+    NONE: number;
+    LISTEN: number;
+    CONNECTING: number;
+    CONNECTED: number;
+  };
+  isBluetoothAvailable(): boolean;
+  isBluetoothEnabled(): boolean;
+  getPairedDevices(): Promise<BluetoothDevice[]>;
+  connect(address: string, secure: boolean): Promise<void>;
+  disconnect(): Promise<void>;
+  giayBaoTienNuocNongThon(printerType: string, jsonData: object): void;
 }
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<PrinterDriversModule>('PrinterDrivers');
+export default requireNativeModule<PrinterDriversModule>("PrinterDrivers");

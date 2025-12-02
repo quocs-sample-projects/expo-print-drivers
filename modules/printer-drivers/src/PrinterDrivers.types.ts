@@ -1,19 +1,38 @@
-import type { StyleProp, ViewStyle } from 'react-native';
+export interface BluetoothDevice {
+  name: string;
+  address: string;
+}
 
-export type OnLoadEventPayload = {
-  url: string;
-};
+export interface BluetoothDevice {
+  name: string;
+  address: string;
+}
+
+// Event payloads
+export interface DeviceConnectedEvent {
+  deviceName: string;
+}
+
+export interface DeviceDisconnectedEvent {}
+
+export interface ConnectionFailedEvent {
+  error: string;
+}
+
+export interface ConnectionLostEvent {}
+
+export interface DataReceivedEvent {
+  bytes: number[];
+}
 
 export type PrinterDriversModuleEvents = {
-  onChange: (params: ChangeEventPayload) => void;
+  onDeviceConnected(event: DeviceConnectedEvent): void;
+  onDeviceDisconnected(event: DeviceDisconnectedEvent): void;
+  onConnectionFailed(event: ConnectionFailedEvent): void;
+  onConnectionLost(event: ConnectionLostEvent): void;
+  onDataReceived(event: DataReceivedEvent): void;
 };
 
 export type ChangeEventPayload = {
   value: string;
-};
-
-export type PrinterDriversViewProps = {
-  url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
-  style?: StyleProp<ViewStyle>;
 };

@@ -41,3 +41,8 @@ android {
     abortOnError false
   }
 }
+
+dependencies {
+    implementation files('libs/WoosimLib262.jar')
+    implementation("com.facebook.react:react-native")
+}
