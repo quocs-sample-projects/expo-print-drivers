@@ -5,7 +5,7 @@ package expo.modules.printerdrivers.bluetoothService
  */
 
 interface BluetoothEventHandler {
-    fun onDeviceConnected(deviceName: String)
+    fun onDeviceConnected(deviceName: String, deviceAddress: String)
     fun onDeviceDisconnected()
     fun onConnectionFailed(error: String)
     fun onConnectionLost()

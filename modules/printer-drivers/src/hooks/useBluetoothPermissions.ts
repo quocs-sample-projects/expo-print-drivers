@@ -65,8 +65,15 @@ export function useBluetoothPermissions() {
           loading: false,
         });
       }
-    } catch (error) {
-      console.error("Error checking Bluetooth permissions:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        Alert.alert("Error checking Bluetooth state:", error.message);
+      } else {
+        Alert.alert(
+          "Error checking Bluetooth state:",
+          "An unknown error occurred"
+        );
+      }
       setPermissionStatus({
         granted: false,
         canAskAgain: true,
@@ -131,8 +138,15 @@ export function useBluetoothPermissions() {
       }
 
       return allGranted;
-    } catch (error) {
-      console.error("Error requesting Bluetooth permissions:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        Alert.alert("Error checking Bluetooth state:", error.message);
+      } else {
+        Alert.alert(
+          "Error checking Bluetooth state:",
+          "An unknown error occurred"
+        );
+      }
       setPermissionStatus({
         granted: false,
         canAskAgain: true,

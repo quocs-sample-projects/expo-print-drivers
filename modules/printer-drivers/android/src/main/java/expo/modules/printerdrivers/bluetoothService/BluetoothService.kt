@@ -1,6 +1,5 @@
 package expo.modules.printerdrivers.bluetoothService
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -8,14 +7,12 @@ import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresPermission
 import expo.modules.printerdrivers.BuildConfig
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 /**
  * This class does all the work for setting up and managing Bluetooth connections with printers.
@@ -28,7 +25,7 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
 
         // Unique UUID for SPP (Serial Port Profile)
         @OptIn(ExperimentalUuidApi::class)
-        private val SPP_UUID = UUID.fromString(Uuid.random().toString())
+        private val SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
         @Volatile
         private var INSTANCE: BluetoothService? = null
@@ -50,7 +47,9 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
          */
         fun clearInstance() {
             synchronized(this) {
+                INSTANCE?.stop()
                 INSTANCE = null
+                Log.d(TAG, "--> BluetoothService instance cleared")
             }
         }
     }
@@ -90,6 +89,10 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
         connectThread?.cancel()
         connectThread = null
 
+        // Cancel any thread currently running a connection
+        connectedThread?.cancel()
+        connectedThread = null
+
         setState(BluetoothConnectionState.LISTEN)
     }
 
@@ -98,9 +101,10 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
      * @param device The BluetoothDevice to connect
      * @param secure Socket Security type - Secure (true), Insecure (false)
      */
+    @SuppressLint("MissingPermission")
     @Synchronized
     fun connect(device: BluetoothDevice, secure: Boolean = true) {
-        if (DEBUG) Log.d(TAG, "--> connect to: $device")
+        if (DEBUG) Log.d(TAG, "--> connect to: ${device.name} (${device.address})")
 
         // Cancel any thread attempting to make a connection
         if (currentState == BluetoothConnectionState.CONNECTING) {
@@ -138,12 +142,12 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
         connectedThread = ConnectedThread(socket, socketType)
         connectedThread?.start()
 
+        setState(BluetoothConnectionState.CONNECTED)
+
         // Notify connection success
         handler.post {
-            eventHandler.onDeviceConnected(device.name ?: "Unknown Device")
+            eventHandler.onDeviceConnected(device.name ?: "Unknown", device.address)
         }
-
-        setState(BluetoothConnectionState.CONNECTED)
     }
 
     /**
@@ -181,7 +185,10 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
 
         // Synchronize a copy of the ConnectedThread
         synchronized(this) {
-            if (currentState != BluetoothConnectionState.CONNECTED) return
+            if (currentState != BluetoothConnectionState.CONNECTED) {
+                Log.w(TAG, "--> write() called but not connected")
+                return
+            }
             r = connectedThread
         }
 
@@ -195,6 +202,8 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
     private fun connectionFailed() {
         // When the application is destroyed, just return
         if (currentState == BluetoothConnectionState.NONE) return
+
+        setState(BluetoothConnectionState.NONE)
 
         handler.post {
             eventHandler.onConnectionFailed("Unable to connect to device")
@@ -210,6 +219,8 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
     private fun connectionLost() {
         // When the application is destroyed, just return
         if (currentState == BluetoothConnectionState.NONE) return
+
+        setState(BluetoothConnectionState.NONE)
 
         handler.post {
             eventHandler.onConnectionLost()
@@ -244,31 +255,37 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "--> Socket Type: $socketType create() failed", e)
+            } catch (e: SecurityException) {
+                Log.e(TAG, "--> Missing Bluetooth permissions", e)
             }
 
             socket = tmp
         }
 
-        @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
+        @SuppressLint("MissingPermission")
         override fun run() {
             Log.i(TAG, "--> BEGIN mConnectThread SocketType: $socketType")
             name = "ConnectThread$socketType"
 
             // Always cancel discovery because it will slow down a connection
-            adapter?.cancelDiscovery()
+            try {
+                adapter?.cancelDiscovery()
+            } catch (e: SecurityException) {
+                Log.e(TAG, "--> Missing permission to cancel discovery", e)
+            }
 
             // Make a connection to the BluetoothSocket
             try {
                 // This is a blocking call and will only return on a successful connection or an exception
                 socket?.connect()
             } catch (e: IOException) {
+                Log.e(TAG, "--> Connection Failed", e)
                 // Close the socket
                 try {
                     socket?.close()
                 } catch (e2: IOException) {
                     Log.e(TAG, "--> unable to close() $socketType socket during connection failure", e2)
                 }
-                Log.e(TAG, "--> Connection Failed", e)
                 connectionFailed()
                 return
             }
@@ -326,7 +343,7 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
             val buffer = ByteArray(1024)
 
             // Keep listening to the InputStream while connected
-            while (true) {
+            while (currentState == BluetoothConnectionState.CONNECTED) {
                 try {
                     // Read from the InputStream
                     val bytes = inStream?.read(buffer) ?: -1
@@ -346,6 +363,8 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
                     break
                 }
             }
+            
+            Log.i(TAG, "--> END mConnectedThread")
         }
 
         /**
@@ -356,6 +375,7 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
             try {
                 outStream?.write(buffer)
                 outStream?.flush()
+                if (DEBUG) Log.d(TAG, "--> Wrote ${buffer.size} bytes")
             } catch (e: IOException) {
                 Log.e(TAG, "--> Exception during write", e)
                 handler.post {
@@ -369,6 +389,7 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
                 inStream?.close()
                 outStream?.close()
                 socket.close()
+                Log.d(TAG, "--> ConnectedThread cancelled")
             } catch (e: IOException) {
                 Log.e(TAG, "--> close() of connect socket failed", e)
             }

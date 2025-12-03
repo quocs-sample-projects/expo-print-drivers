@@ -3,14 +3,9 @@ export interface BluetoothDevice {
   address: string;
 }
 
-export interface BluetoothDevice {
-  name: string;
-  address: string;
-}
-
-// Event payloads
 export interface DeviceConnectedEvent {
   deviceName: string;
+  deviceAddress: string;
 }
 
 export interface DeviceDisconnectedEvent {}
@@ -22,7 +17,7 @@ export interface ConnectionFailedEvent {
 export interface ConnectionLostEvent {}
 
 export interface DataReceivedEvent {
-  bytes: number[];
+  data: number[];
 }
 
 export type PrinterDriversModuleEvents = {

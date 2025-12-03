@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
 import expo.modules.kotlin.modules.Module
@@ -13,6 +12,7 @@ import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.printerdrivers.bluetoothService.BluetoothEventHandler
 import expo.modules.printerdrivers.bluetoothService.BluetoothService
 import expo.modules.printerdrivers.drivers.WoosimWSPi350Driver
+import expo.modules.printerdrivers.drivers.Honeywell0188Driver
 import com.facebook.react.bridge.ReadableMap
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.printerdrivers.bluetoothService.BluetoothConnectionState
@@ -20,30 +20,38 @@ import expo.modules.printerdrivers.utils.constants.PrinterType
 
 class PrinterDriversModule : Module() {
     companion object {
-        var TAG = "PrinterDriversModule"
+        private const val TAG = "PrinterDriversModule"
     }
 
     // Event handler forwards native events to JS via sendEvent
     private val eventHandler = object : BluetoothEventHandler {
-        override fun onDeviceConnected(deviceName: String) {
-            sendEvent("onChange", mapOf("type" to "connected", "name" to deviceName))
+        override fun onDeviceConnected(deviceName: String, deviceAddress: String) {
+            Log.d(TAG, "--> onDeviceConnected: $deviceName ($deviceAddress)")
+            sendEvent("onDeviceConnected", mapOf(
+                "deviceName" to deviceName,
+                "deviceAddress" to deviceAddress
+            ))
         }
 
         override fun onDeviceDisconnected() {
-            sendEvent("onChange", mapOf("type" to "disconnected"))
+            Log.d(TAG, "--> onDeviceDisconnected")
+            sendEvent("onDeviceDisconnected", emptyMap<String, Any>())
         }
 
         override fun onConnectionFailed(error: String) {
-            sendEvent("onChange", mapOf("type" to "connectionFailed", "message" to error))
+            Log.d(TAG, "--> onConnectionFailed: $error")
+            sendEvent("onConnectionFailed", mapOf("error" to error))
         }
 
         override fun onConnectionLost() {
-            sendEvent("onChange", mapOf("type" to "connectionLost"))
+            Log.d(TAG, "--> onConnectionLost")
+            sendEvent("onConnectionLost", emptyMap<String, Any>())
         }
 
         override fun onDataReceived(data: ByteArray) {
-            val b64 = Base64.encodeToString(data, Base64.NO_WRAP)
-            sendEvent("onChange", mapOf("type" to "data", "dataBase64" to b64))
+            Log.d(TAG, "--> onDataReceived: ${data.size} bytes")
+            // Convert ByteArray to List<Int> for JS
+            sendEvent("onDataReceived", mapOf("data" to data.map { it.toInt() }))
         }
     }
 
@@ -59,8 +67,8 @@ class PrinterDriversModule : Module() {
     private val woosimWSPi350Driver: WoosimWSPi350Driver by lazy {
         WoosimWSPi350Driver(bluetoothService)
     }
-    private val honeywell0188Driver: WoosimWSPi350Driver by lazy {
-        WoosimWSPi350Driver(bluetoothService)
+    private val honeywell0188Driver: Honeywell0188Driver by lazy {
+        Honeywell0188Driver(bluetoothService)
     }
 
     private fun checkBluetoothPermissions() {
@@ -106,11 +114,14 @@ class PrinterDriversModule : Module() {
         Name("PrinterDrivers")
 
         OnCreate {
+            Log.d(TAG, "--> OnCreate: Starting BluetoothService")
             bluetoothService.start()
         }
 
         OnDestroy {
+            Log.d(TAG, "--> OnDestroy: Stopping BluetoothService")
             bluetoothService.stop()
+            BluetoothService.clearInstance()
         }
 
         // === Data sending to TS layer ===
@@ -123,34 +134,35 @@ class PrinterDriversModule : Module() {
         )
 
         // Expose constants
-        Constant("PrinterType") {
-            mapOf(
+        Constants(
+            "PrinterType" to mapOf(
                 "WOOSIM_WSP_i350" to PrinterType.WOOSIM_WSP_i350,
                 "HONEYWELL_0188" to PrinterType.HONEYWELL_0188
-            )
-        }
-
-        Constant("BluetoothConnectionState") {
-            mapOf(
+            ),
+            "BluetoothConnectionState" to mapOf(
                 "NONE" to BluetoothConnectionState.NONE,
                 "LISTEN" to BluetoothConnectionState.LISTEN,
                 "CONNECTING" to BluetoothConnectionState.CONNECTING,
                 "CONNECTED" to BluetoothConnectionState.CONNECTED
             )
+        )
+
+        Function("getBluetoothState") {
+            bluetoothService.getState()
         }
 
         Function("isBluetoothAvailable") {
-            return@Function bluetoothAdapter != null
+            bluetoothAdapter != null
         }
 
         Function("isBluetoothEnabled") {
-            return@Function bluetoothAdapter?.isEnabled == true
+            bluetoothAdapter?.isEnabled == true
         }
 
         AsyncFunction("getPairedDevices") {
             checkBluetoothPermissions()
             val pairedDevices = bluetoothAdapter?.bondedDevices ?: emptySet()
-            return@AsyncFunction pairedDevices.map { device ->
+            pairedDevices.map { device ->
                 mapOf(
                     "name" to (device.name ?: "Unknown"),
                     "address" to device.address
@@ -159,15 +171,17 @@ class PrinterDriversModule : Module() {
         }
 
         AsyncFunction("connect") { address: String, secure: Boolean ->
+            Log.d(TAG, "--> connect() called for address: $address")
             checkBluetoothPermissions()
 
             val device = bluetoothAdapter?.getRemoteDevice(address)
-                ?: throw Throwable("Device not found")
+                ?: throw IllegalArgumentException("Device not found: $address")
 
             bluetoothService.connect(device, secure)
         }
 
         AsyncFunction("disconnect") {
+            Log.d(TAG, "--> disconnect() called")
             bluetoothService.stop()
         }
 
@@ -175,7 +189,7 @@ class PrinterDriversModule : Module() {
             when (printerType) {
                 PrinterType.WOOSIM_WSP_i350 -> woosimWSPi350Driver.giayBaoTienNuocNongThon(jsonData)
                 PrinterType.HONEYWELL_0188 -> honeywell0188Driver.giayBaoTienNuocNongThon(jsonData)
-                else -> Log.e(TAG, "--> Printer type not supported")
+                else -> Log.e(TAG, "--> Printer type not supported: $printerType")
             }
         }
     }

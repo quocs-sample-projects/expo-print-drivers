@@ -3,5 +3,6 @@
  * Do not modify this file directly.
  */
 
+export * from "./useBluetoothConnection";
 export * from "./useBluetoothEnabled";
 export * from "./useBluetoothPermissions";

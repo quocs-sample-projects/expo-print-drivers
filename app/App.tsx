@@ -1,20 +1,22 @@
 import { StatusBar } from "expo-status-bar";
 import { ReactNode, useEffect, useState } from "react";
-import { Button, ScrollView, View, Text, Alert } from "react-native";
-import PrinterDrivers, {
+import {
+  Button,
+  ScrollView,
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import {
   useBluetoothPermissions,
   useBluetoothEnabled,
+  useBluetoothConnection,
   BluetoothDevice,
+  BluetoothService,
 } from "../modules/printer-drivers";
-import { styles } from "./App.styles";
-
-const testObject = {
-  name: "Nguyen Van A",
-  address: "123 Le Loi, District 1, HCM City",
-  money: 150000,
-  isMale: true,
-  hobbies: ["reading", "traveling", "swimming"],
-};
+import { styles, colors } from "./App.styles";
+import { isEqual } from "lodash";
 
 export default function App() {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
@@ -30,6 +32,8 @@ export default function App() {
     isAvailable,
     loading: enabledLoading,
   } = useBluetoothEnabled();
+
+  const { status, connect, disconnect, clearError } = useBluetoothConnection();
 
   useEffect(() => {
     if (enabledLoading || permissionLoading) {
@@ -51,8 +55,13 @@ export default function App() {
     loadPairedDevices();
   }, [isAvailable, isEnabled, granted, permissionLoading, enabledLoading]);
 
+  useEffect(() => {
+    if (status.error) {
+      Alert.alert("Bluetooth Connection Error", status.error);
+    }
+  }, [status]);
+
   const loadPairedDevices = async () => {
-    console.log("--> Loading paired devices...");
     if (!granted) {
       const hasPermission = await requestPermissions();
       if (!hasPermission) {
@@ -62,11 +71,29 @@ export default function App() {
     }
 
     try {
-      const pairedDevices = await PrinterDrivers.getPairedDevices();
+      const pairedDevices = await BluetoothService.getPairedDevices();
       setDevices(pairedDevices);
     } catch (error) {
       Alert.alert("Error", "Failed to load paired devices");
     }
+  };
+
+  const handleConnect = async (device: BluetoothDevice) => {
+    if (status.error) {
+      clearError();
+    }
+    try {
+      if (status.isConnected || status.isConnecting) {
+        await disconnect();
+      }
+      await connect(device, true);
+    } catch (error) {
+      Alert.alert("Bluetooth Connection Error", "Failed to connect to device");
+    }
+  };
+
+  const handleDisconnect = async () => {
+    await disconnect();
   };
 
   const renderHeader = () => (
@@ -135,12 +162,60 @@ export default function App() {
   };
 
   const renderDeviceItem = (item: BluetoothDevice) => {
+    const isThisDeviceConnected = isEqual(status.connectedDevice, item);
+    const isThisDeviceConnecting = isEqual(status.connectingDevice, item);
+    const isAnyDeviceBusy = status.isConnecting || status.isDisconnecting;
+
+    const getButtonConfig = () => {
+      if (isThisDeviceConnected) {
+        return {
+          onPress: handleDisconnect,
+          text: status.isDisconnecting ? "Disconnecting..." : "Disconnect",
+          backgroundColor: colors.error,
+        };
+      }
+
+      const text = isThisDeviceConnecting
+        ? status.isDisconnecting
+          ? "Disconnecting..."
+          : "Connecting..."
+        : "Connect";
+
+      return {
+        onPress: () => handleConnect(item),
+        text,
+        backgroundColor: undefined,
+      };
+    };
+
+    const buttonConfig = getButtonConfig();
+
     return (
       <View key={item.address} style={styles.deviceCard}>
         <View style={styles.deviceInfo}>
           <Text style={styles.deviceName}>{item.name}</Text>
           <Text style={styles.deviceAddress}>{item.address}</Text>
         </View>
+        <TouchableOpacity
+          style={[
+            styles.connectButton,
+            buttonConfig.backgroundColor && {
+              backgroundColor: buttonConfig.backgroundColor,
+            },
+            isAnyDeviceBusy && styles.connectButtonDisabled,
+          ]}
+          onPress={buttonConfig.onPress}
+          disabled={isAnyDeviceBusy}
+        >
+          <Text
+            style={[
+              styles.connectButtonText,
+              isAnyDeviceBusy && styles.connectButtonTextDisabled,
+            ]}
+          >
+            {buttonConfig.text}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };

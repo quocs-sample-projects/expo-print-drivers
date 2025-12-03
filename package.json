@@ -9,10 +9,12 @@
     "prebuild": "expo prebuild --clean"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.21",
     "expo": "~54.0.25",
     "expo-dev-client": "^6.0.18",
     "expo-status-bar": "~3.0.8",
     "expo-system-ui": "^6.0.8",
+    "lodash": "^4.17.21",
     "printer-drivers": "link:modules/printer-drivers",
     "react": "19.1.0",
     "react-native": "0.81.5"

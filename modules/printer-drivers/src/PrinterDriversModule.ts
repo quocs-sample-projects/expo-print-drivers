@@ -5,6 +5,7 @@ import {
   PrinterDriversModuleEvents,
 } from "./PrinterDrivers.types";
 
+// Define the native module interface (using functions and constants and objects)
 declare class PrinterDriversModule extends NativeModule<PrinterDriversModuleEvents> {
   PrinterType: {
     WOOSIM_WSP_i350: string;
@@ -16,6 +17,7 @@ declare class PrinterDriversModule extends NativeModule<PrinterDriversModuleEven
     CONNECTING: number;
     CONNECTED: number;
   };
+  getBluetoothState(): number;
   isBluetoothAvailable(): boolean;
   isBluetoothEnabled(): boolean;
   getPairedDevices(): Promise<BluetoothDevice[]>;
