@@ -65,7 +65,8 @@ class PrinterDriversModule : Module() {
 
     // Drivers initialized with the singleton BluetoothService
     private val woosimWSPi350Driver: WoosimWSPi350Driver by lazy {
-        WoosimWSPi350Driver(bluetoothService)
+        val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+        WoosimWSPi350Driver(bluetoothService, context)
     }
     private val honeywell0188Driver: Honeywell0188Driver by lazy {
         Honeywell0188Driver(bluetoothService)
