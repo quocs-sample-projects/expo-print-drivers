@@ -121,7 +121,7 @@ export default function App() {
 
   const handlePrint = () => {
     TicketPrinter.giayBaoTienNuocNongThon(
-      PrinterDriversModule.PrinterType.WOOSIM_WSP_i350,
+      PrinterDriversModule.PrinterType.HONEYWELL_PR3,
       testPrinterData
     );
   };

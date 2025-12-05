@@ -10,6 +10,7 @@ declare class PrinterDriversModule extends NativeModule<PrinterDriversModuleEven
   PrinterType: {
     WOOSIM_WSP_i350: string;
     HONEYWELL_0188: string;
+    HONEYWELL_PR3: string;
   };
   BluetoothConnectionState: {
     NONE: number;

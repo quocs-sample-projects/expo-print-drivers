@@ -16,6 +16,7 @@ import expo.modules.printerdrivers.drivers.Honeywell0188Driver
 import com.facebook.react.bridge.ReadableMap
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.printerdrivers.bluetoothService.BluetoothConnectionState
+import expo.modules.printerdrivers.drivers.HoneywellPR3Driver
 import expo.modules.printerdrivers.utils.constants.PrinterType
 
 class PrinterDriversModule : Module() {
@@ -50,7 +51,6 @@ class PrinterDriversModule : Module() {
 
         override fun onDataReceived(data: ByteArray) {
             Log.d(TAG, "--> onDataReceived: ${data.size} bytes")
-            // Convert ByteArray to List<Int> for JS
             sendEvent("onDataReceived", mapOf("data" to data.map { it.toInt() }))
         }
     }
@@ -70,6 +70,9 @@ class PrinterDriversModule : Module() {
     }
     private val honeywell0188Driver: Honeywell0188Driver by lazy {
         Honeywell0188Driver(bluetoothService)
+    }
+    private val honeywellPR3Driver: HoneywellPR3Driver by lazy {
+        HoneywellPR3Driver(bluetoothService)
     }
 
     private fun checkBluetoothPermissions() {
@@ -138,7 +141,8 @@ class PrinterDriversModule : Module() {
         Constants(
             "PrinterType" to mapOf(
                 "WOOSIM_WSP_i350" to PrinterType.WOOSIM_WSP_i350,
-                "HONEYWELL_0188" to PrinterType.HONEYWELL_0188
+                "HONEYWELL_0188" to PrinterType.HONEYWELL_0188,
+                "HONEYWELL_PR3" to PrinterType.HONEYWELL_PR3
             ),
             "BluetoothConnectionState" to mapOf(
                 "NONE" to BluetoothConnectionState.NONE,
@@ -190,6 +194,7 @@ class PrinterDriversModule : Module() {
             when (printerType) {
                 PrinterType.WOOSIM_WSP_i350 -> woosimWSPi350Driver.giayBaoTienNuocNongThon(jsonData)
                 PrinterType.HONEYWELL_0188 -> honeywell0188Driver.giayBaoTienNuocNongThon(jsonData)
+                PrinterType.HONEYWELL_PR3 -> honeywellPR3Driver.giayBaoTienNuocNongThon(jsonData)
                 else -> Log.e(TAG, "--> Printer type not supported: $printerType")
             }
         }
