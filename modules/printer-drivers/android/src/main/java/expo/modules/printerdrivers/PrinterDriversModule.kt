@@ -69,10 +69,12 @@ class PrinterDriversModule : Module() {
         WoosimWSPi350Driver(bluetoothService, context)
     }
     private val honeywell0188Driver: Honeywell0188Driver by lazy {
-        Honeywell0188Driver(bluetoothService)
+        val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+        Honeywell0188Driver(bluetoothService,context)
     }
     private val honeywellPR3Driver: HoneywellPR3Driver by lazy {
-        HoneywellPR3Driver(bluetoothService)
+        val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+        HoneywellPR3Driver(bluetoothService, context)
     }
 
     private fun checkBluetoothPermissions() {

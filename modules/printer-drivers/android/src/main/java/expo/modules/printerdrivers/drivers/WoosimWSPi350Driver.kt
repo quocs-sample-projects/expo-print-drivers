@@ -11,9 +11,9 @@ import java.util.Date
 
 class WoosimWSPi350Driver(
     bluetoothService: BluetoothService,
-    private val context: Context
+    context: Context
 ) :
-    BaseDriver(bluetoothService) {
+    BaseDriver(bluetoothService, context) {
     override var driverName: String = "WoosimWSPi350Driver"
 
     override fun initPrinter() {
