@@ -22,7 +22,7 @@ import { FileHelper } from "./utils/helpers";
 import PrinterDriversModule from "../modules/printer-drivers/src/PrinterDriversModule";
 
 const MA_QR =
-  "https://files.get-qr.com/files/693132726b6b00d09b72c063/8pz4q0.png?v=2025-12-04T07:04:20.173Z";
+  "https://drive.google.com/uc?export=download&id=1zJtXeNPdzZHqr6rzdoBXekNdk9pDfThj";
 
 const testPrinterData = {
   name: "Nguyen Van A",
