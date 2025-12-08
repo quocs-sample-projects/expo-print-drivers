@@ -18,7 +18,7 @@ import {
 } from "../modules/printer-drivers";
 import { styles, colors } from "./App.styles";
 import { isEqual } from "lodash";
-import { FileHelper } from "./utils/helpers/file-helper";
+import { FileHelper } from "./utils/helpers";
 import PrinterDriversModule from "../modules/printer-drivers/src/PrinterDriversModule";
 
 const MA_QR =
@@ -120,15 +120,24 @@ export default function App() {
   };
 
   const handlePrint = () => {
-    const useWoosim = status.connectedDevice?.name
-      .toLowerCase()
-      .includes("woosim");
-    TicketPrinter.giayBaoTienNuocNongThon(
-      useWoosim
-        ? PrinterDriversModule.PrinterType.WOOSIM_WSP_i350
-        : PrinterDriversModule.PrinterType.HONEYWELL_PR3,
-      testPrinterData
-    );
+    const deviceName = status.connectedDevice?.name.toLowerCase() ?? "";
+    let usingDriver: string | null = null;
+    if (deviceName.includes("woosim")) {
+      usingDriver = PrinterDriversModule.PrinterType.WOOSIM_WSP_i350;
+    } else if (deviceName.includes("pr3")) {
+      usingDriver = PrinterDriversModule.PrinterType.HONEYWELL_PR3;
+    } else if (deviceName.includes("mpd31d")) {
+      usingDriver = PrinterDriversModule.PrinterType.HONEYWELL_0188;
+    }
+
+    if (usingDriver) {
+      TicketPrinter.giayBaoTienNuocNongThon(usingDriver, testPrinterData);
+    } else {
+      Alert.alert(
+        "Printing Error",
+        "Unsupported printer model for test print."
+      );
+    }
   };
 
   const renderHeader = () => (
