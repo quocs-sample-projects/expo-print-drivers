@@ -10,10 +10,8 @@ import expo.modules.printerdrivers.utils.helpers.WoosimHelper
 import java.util.Date
 
 class WoosimWSPi350Driver(
-    bluetoothService: BluetoothService,
-    context: Context
-) :
-    BaseDriver(bluetoothService, context) {
+    bluetoothService: BluetoothService, context: Context
+) : BaseDriver(bluetoothService, context) {
     override var driverName: String = "WoosimWSPi350Driver"
     override var printerPageWidth: Int = 36
     override var separateLineLength: Int = 16
@@ -23,26 +21,19 @@ class WoosimWSPi350Driver(
     }
 
     override fun addAlignedStringToBuffer(
-        string: String,
-        align: Int,
-        bold: Boolean,
-        doubleHeight: Boolean
+        string: String, align: Int, bold: Boolean, doubleFontSize: Boolean
     ) {
+        val wrappedString = CommonHelper.createWrappedString(string, printerPageWidth)
+
         buffer.put(
             WoosimHelper.addAlignedString(
-                CommonHelper.createWrappedString(string, printerPageWidth),
-                align,
-                bold,
-                doubleHeight
+                wrappedString, align, bold, doubleFontSize
             )
         )
     }
 
     private fun addTwoMarginedStringsToBuffer(
-        str1: String,
-        str2: String,
-        bold: Boolean = false,
-        doubleHeight: Boolean = false
+        str1: String, str2: String, bold: Boolean = false, doubleHeight: Boolean = false
     ) {
         buffer.put(WoosimHelper.addTwoMarginedStrings(str1, str2, bold, doubleHeight))
     }

@@ -23,9 +23,11 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         string: String,
         align: Int,
         bold: Boolean,
-        doubleHeight: Boolean
+        doubleFontSize: Boolean
     ) {
-        TODO("Not yet implemented")
+        val wrappedString = CommonHelper.createWrappedString(string, printerPageWidth)
+        
+        buffer.put(wrappedString.toByteArray())
     }
 
     override fun addBitmapToBuffer(fileName: String) {
@@ -62,14 +64,9 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     }
 
     override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {
-        addSeparateLineToBuffer()
 
-        buffer.put(
-            CommonHelper.createWrappedString(
-                "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
-                printerPageWidth
-            ).toByteArray()
-        )
+        addSeparateLineToBuffer()
+        addAlignedStringToBuffer("Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n")
 //
 //        buffer.put(PR3Command.BOLD_ON)
 //        buffer.put("Dòng chữ đậm\n".toByteArray())

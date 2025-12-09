@@ -1,6 +1,7 @@
 package expo.modules.printerdrivers.drivers
 
 import android.content.Context
+import androidx.annotation.IntDef
 import com.facebook.react.bridge.ReadableMap
 import com.woosim.printer.WoosimCmd
 import expo.modules.printerdrivers.bluetoothService.BluetoothService
@@ -36,7 +37,7 @@ abstract class BaseDriver(
         string: String,
         align: Int = WoosimCmd.ALIGN_LEFT,
         bold: Boolean = false,
-        doubleHeight: Boolean = false
+        doubleFontSize: Boolean = false
     )
     abstract fun addBitmapToBuffer(fileName: String)
     abstract fun addLineFeedToBuffer(lineNumber: Int = 1)

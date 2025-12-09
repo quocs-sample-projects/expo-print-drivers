@@ -20,7 +20,7 @@ class Honeywell0188Driver(bluetoothService: BluetoothService, context: Context) 
         string: String,
         align: Int,
         bold: Boolean,
-        doubleHeight: Boolean
+        doubleFontSize: Boolean
     ) {
         TODO("Not yet implemented")
     }
