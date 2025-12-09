@@ -3,6 +3,7 @@ package expo.modules.printerdrivers.drivers
 import android.content.Context
 import android.graphics.BitmapFactory
 import com.facebook.react.bridge.ReadableMap
+import com.woosim.printer.WoosimCmd
 import expo.modules.printerdrivers.bluetoothService.BluetoothService
 import expo.modules.printerdrivers.utils.constants.PR3Command
 import expo.modules.printerdrivers.utils.helpers.CommonHelper
@@ -13,21 +14,24 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     BaseDriver(bluetoothService, context) {
     override var driverName = "HoneywellPR3Driver"
     override var printerPageWidth: Int = 53
-    override var separateLineLength: Int = 71
+    override var separateLineLength: Int = 72
 
     override fun initPrinter() {
         // buffer.put(PR3Command.INIT)
     }
 
     override fun addAlignedStringToBuffer(
-        string: String,
-        align: Int,
-        bold: Boolean,
-        doubleFontSize: Boolean
+        string: String, align: Int, bold: Boolean, doubleFontSize: Boolean
     ) {
-        val wrappedString = CommonHelper.createWrappedString(string, printerPageWidth)
-        
-        buffer.put(wrappedString.toByteArray())
+        val wrappedStrings = CommonHelper.createWrappedStringArray(string, printerPageWidth)
+
+        for (string in wrappedStrings) {
+            println(string.length)
+            println("'${string}'")
+            val addingPadding = CommonHelper.createStringPadding(string, printerPageWidth, align)
+            println(addingPadding.length)
+            buffer.put("$addingPadding$string".toByteArray())
+        }
     }
 
     override fun addBitmapToBuffer(fileName: String) {
@@ -67,6 +71,14 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
 
         addSeparateLineToBuffer()
         addAlignedStringToBuffer("Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n")
+        addAlignedStringToBuffer(
+            "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
+            WoosimCmd.ALIGN_CENTER
+        )
+        addAlignedStringToBuffer(
+            "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
+            WoosimCmd.ALIGN_RIGHT
+        )
 //
 //        buffer.put(PR3Command.BOLD_ON)
 //        buffer.put("Dòng chữ đậm\n".toByteArray())
