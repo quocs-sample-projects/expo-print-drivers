@@ -1,16 +1,15 @@
 package expo.modules.printerdrivers.utils.helpers
 
-import expo.modules.printerdrivers.utils.constants.PrinterPageSize
 import java.nio.ByteBuffer
 
 object CommonHelper {
-    fun addSeparateLine(length: Int = PrinterPageSize.width): ByteArray {
+    fun createSeparatorLine(length: Int): ByteArray {
         var line = "-".repeat(length)
         line+="\n"
         return line.toByteArray()
     }
 
-    fun wordWrapStr(source: String?, len: Int): String {
+    fun createWrappedString(source: String?, len: Int): String {
         if (source == null) {
             return ""
         }
