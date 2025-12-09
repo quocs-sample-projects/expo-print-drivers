@@ -1,11 +1,13 @@
 package expo.modules.printerdrivers.drivers
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Log
 import com.facebook.react.bridge.ReadableMap
 import expo.modules.printerdrivers.bluetoothService.BluetoothService
-import expo.modules.printerdrivers.utils.constants.EscPosCommand
 import expo.modules.printerdrivers.utils.constants.PR3Command
-import expo.modules.printerdrivers.utils.helpers.CommonHelper
+import honeywell.printer.DocumentLP
+import java.io.File
 
 class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     BaseDriver(bluetoothService, context) {
@@ -13,7 +15,34 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     override var printerPageWidth: Int = 52
 
     override fun initPrinter() {
-        buffer.put(PR3Command.INIT)
+        // buffer.put(PR3Command.INIT)
+    }
+
+    fun addImageToBuffer(fileName: String) {
+        val docLP = DocumentLP("!")
+
+        try {
+            val qrImagePath = "${context.cacheDir}/$fileName"
+            val imageFile = File(qrImagePath)
+
+            if (imageFile.exists()) {
+                val bitmap = BitmapFactory.decodeFile(qrImagePath)
+                if (bitmap != null) {
+                    // PR3 print head width is 576 dots
+                    docLP.writeImage(bitmap, 576)
+                    bitmap.recycle()
+                } else {
+                    docLP.writeText("ERROR: Failed to decode image")
+                }
+            } else {
+                docLP.writeText("ERROR: $fileName not found")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            docLP.writeText("ERROR: ${e.message}")
+        }
+
+        buffer.put(docLP.documentData)
     }
 
     override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {
@@ -46,7 +75,8 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
 
         buffer.put("Dòng chữ bình thường\n".toByteArray())
 
-        
+        addImageToBuffer("ma_qr.png")
+
         buffer.put("---------------------------------------.\n".toByteArray())
 
         buffer.put(PR3Command.NEW_LINE)
