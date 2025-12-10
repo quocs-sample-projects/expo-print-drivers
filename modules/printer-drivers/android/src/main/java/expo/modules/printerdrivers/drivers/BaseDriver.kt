@@ -9,8 +9,7 @@ import expo.modules.printerdrivers.utils.helpers.CommonHelper
 import java.nio.ByteBuffer
 
 abstract class BaseDriver(
-    private val bluetoothService: BluetoothService,
-    val context: Context
+    private val bluetoothService: BluetoothService, val context: Context
 ) {
     var buffer: ByteBuffer = ByteBuffer.allocate(50 * KiB)
     abstract var driverName: String
@@ -20,6 +19,7 @@ abstract class BaseDriver(
     fun clearBuffer() {
         buffer.clear()
     }
+
     fun sendPrintData() {
         // Only send the data that was actually written to the buffer
         val data = ByteArray(buffer.position())
@@ -27,7 +27,8 @@ abstract class BaseDriver(
         buffer.get(data)
         bluetoothService.write(data)
     }
-    fun addSeparateLineToBuffer(){
+
+    fun addSeparateLineToBuffer() {
         buffer.put(CommonHelper.createSeparatorLine(separateLineLength))
     }
 
@@ -38,6 +39,23 @@ abstract class BaseDriver(
         bold: Boolean = false,
         doubleFontSize: Boolean = false
     )
+
+    fun addTwoAlignedStringsToBuffer(
+        leftString: String,
+        rightString: String,
+        leftBold: Boolean = false,
+        rightBold: Boolean = false,
+        leftDoubleHeight: Boolean = false,
+        rightDoubleHeight: Boolean = false,
+    ) {
+        addAlignedStringToBuffer(
+            leftString, bold = leftBold, doubleFontSize = leftDoubleHeight
+        )
+        addAlignedStringToBuffer(
+            rightString, WoosimCmd.ALIGN_RIGHT, bold = rightBold, doubleFontSize = rightDoubleHeight
+        )
+    }
+
     abstract fun addBitmapToBuffer(fileName: String, align: Int = WoosimCmd.ALIGN_LEFT)
     abstract fun addLineFeedsToBuffer(lineNumber: Int = 1)
     abstract fun giayBaoTienNuocNongThon(jsonData: ReadableMap)

@@ -14,12 +14,13 @@ import expo.modules.printerdrivers.utils.constants.PR3Command
 import honeywell.printer.DocumentLP
 import java.io.File
 import androidx.core.graphics.createBitmap
+import expo.modules.printerdrivers.utils.constants.PrinterCharacter
 
 class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     BaseDriver(bluetoothService, context) {
     override var driverName = "HoneywellPR3Driver"
     override var printerPageWidth: Int = 53
-    override var separateLineLength: Int = 72
+    override var separateLineLength: Int = 71
     var imageHeadWidth: Int = 576 // in dots
 
     override fun initPrinter() {
@@ -64,7 +65,7 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         val paint = Paint().apply {
             color = Color.BLACK
             isAntiAlias = false // Sharper text for thermal printers
-            textSize = if (doubleFontSize) 32f else 16f
+            textSize = if (doubleFontSize) 32f else 24f
             typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
 
@@ -177,48 +178,31 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     }
 
     override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {
-        addSeparateLineToBuffer()
-
-        addAlignedStringToBuffer("The quick brown fox jumps over the lazy dog.\n")
-        addAlignedStringToBuffer(
-            "The quick brown fox jumps over the lazy dog.\n",
-            WoosimCmd.ALIGN_CENTER,
-            true,
+//        addSeparateLineToBuffer()
+//        addAlignedStringToBuffer(
+//            "CTY CỔ PHẦN CẤP NƯỚC CẤP CẤP", WoosimCmd.ALIGN_CENTER, bold = true
+//        )
+//        addSeparateLineToBuffer()
+//        addAlignedStringToBuffer(
+//            "PHIẾU BÁO CHỈ SỐ ĐO", WoosimCmd.ALIGN_CENTER, bold = true, doubleFontSize = true
+//        )
+//        addAlignedStringToBuffer("KỲ 12/2025", WoosimCmd.ALIGN_CENTER, bold = true)
+        addAlignedStringToBuffer("04/11/2025 - 04/12/2025", WoosimCmd.ALIGN_CENTER)
+        addAlignedStringToBuffer("DB: 0123456789 - MLT: 01234567", bold = true)
+        addAlignedStringToBuffer("KH: NGUYEN VAN A", bold = true)
+        addAlignedStringToBuffer("Điện thoại KH: 0123456789")
+        addAlignedStringToBuffer("ĐC: 123 Đường Đi Hoài Sẽ Thấy, Phường Còn Lâu Mới Nói, TP.HCM")
+        addAlignedStringToBuffer("Giá biểu: 21 - Định mức: 69")
+        addTwoAlignedStringsToBuffer(
+            leftString = "Chỉ số lala",
+            rightString = "1600 ${PrinterCharacter.M3}",
+            rightBold = true
         )
         addAlignedStringToBuffer(
-            "The quick brown fox jumps over the lazy dog.\n",
-            WoosimCmd.ALIGN_RIGHT,
-            doubleFontSize = true
+            "Quét mã QR . để thanh toán MOMO", WoosimCmd.ALIGN_CENTER, bold = true
         )
-        addAlignedStringToBuffer(
-            "The quick brown fox jumps over the lazy dog.\n",
-            WoosimCmd.ALIGN_RIGHT,
-            bold = true,
-            doubleFontSize = true,
-        )
-
-        addBitmapToBuffer("ma_qr.png", WoosimCmd.ALIGN_CENTER)
-
-        addAlignedStringToBuffer("Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n")
-        addAlignedStringToBuffer(
-            "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
-            WoosimCmd.ALIGN_CENTER,
-            true,
-        )
-        addAlignedStringToBuffer(
-            "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
-            WoosimCmd.ALIGN_RIGHT,
-            doubleFontSize = true
-        )
-        addAlignedStringToBuffer(
-            "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
-            WoosimCmd.ALIGN_RIGHT,
-            bold = true,
-            doubleFontSize = true,
-        )
-
-        addSeparateLineToBuffer()
-
-        addLineFeedsToBuffer(2)
+//        addLineFeedsToBuffer()
+//        addBitmapToBuffer("ma_qr.png", WoosimCmd.ALIGN_CENTER)
+        addLineFeedsToBuffer(3)
     }
 }
