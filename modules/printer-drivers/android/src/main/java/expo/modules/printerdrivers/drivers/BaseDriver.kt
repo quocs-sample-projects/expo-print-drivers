@@ -38,7 +38,7 @@ abstract class BaseDriver(
         bold: Boolean = false,
         doubleFontSize: Boolean = false
     )
-    abstract fun addBitmapToBuffer(fileName: String)
+    abstract fun addBitmapToBuffer(fileName: String, align: Int = WoosimCmd.ALIGN_LEFT)
     abstract fun addLineFeedsToBuffer(lineNumber: Int = 1)
     abstract fun giayBaoTienNuocNongThon(jsonData: ReadableMap)
 }

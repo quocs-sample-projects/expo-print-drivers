@@ -122,7 +122,7 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         bitmap.recycle()
     }
 
-    override fun addBitmapToBuffer(fileName: String) {
+    override fun addBitmapToBuffer(fileName: String, align: Int) {
         val docLP = DocumentLP("!")
 
         try {
@@ -130,10 +130,13 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
             val imageFile = File(qrImagePath)
 
             if (imageFile.exists()) {
-                val bitmap = BitmapFactory.decodeFile(qrImagePath)
-                if (bitmap != null) {
-                    docLP.writeImage(bitmap, imageHeadWidth)
-                    bitmap.recycle()
+                val originalBitmap = BitmapFactory.decodeFile(qrImagePath)
+                if (originalBitmap != null) {
+                    // Create aligned bitmap wrapper
+                    val alignedBitmap = createAlignedBitmap(originalBitmap, align)
+                    docLP.writeImage(alignedBitmap, imageHeadWidth)
+                    alignedBitmap.recycle()
+                    originalBitmap.recycle()
                 } else {
                     docLP.writeText("ERROR: Failed to decode image")
                 }
@@ -146,6 +149,25 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         }
 
         buffer.put(docLP.documentData)
+    }
+
+    private fun createAlignedBitmap(originalBitmap: Bitmap, align: Int): Bitmap {
+        // Create a full-width bitmap with white background
+        val alignedBitmap = createBitmap(imageHeadWidth, originalBitmap.height)
+        val canvas = Canvas(alignedBitmap)
+        canvas.drawColor(Color.WHITE)
+
+        // Calculate x position based on alignment
+        val x = when (align) {
+            WoosimCmd.ALIGN_CENTER -> ((imageHeadWidth - originalBitmap.width) / 2).toFloat()
+            WoosimCmd.ALIGN_RIGHT -> (imageHeadWidth - originalBitmap.width).toFloat()
+            else -> 0f // Left aligned
+        }
+
+        // Draw the original bitmap at the calculated position
+        canvas.drawBitmap(originalBitmap, x, 0f, null)
+
+        return alignedBitmap
     }
 
     override fun addLineFeedsToBuffer(lineNumber: Int) {
@@ -175,6 +197,8 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
             doubleFontSize = true,
         )
 
+        addBitmapToBuffer("ma_qr.png", WoosimCmd.ALIGN_CENTER)
+
         addAlignedStringToBuffer("Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n")
         addAlignedStringToBuffer(
             "Gã vội vã bước nhanh qua phố xá, dưới bóng trời chớm nở những giấc mơ.\n",
@@ -192,8 +216,6 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
             bold = true,
             doubleFontSize = true,
         )
-
-//        addBitmapToBuffer("ma_qr.png")
 
         addSeparateLineToBuffer()
 

@@ -64,8 +64,12 @@ class WoosimWSPi350Driver(
         buffer.put(WoosimHelper.addLineFeed(lineNumber))
     }
 
-    override fun addBitmapToBuffer(fileName: String) {
+    override fun addBitmapToBuffer(fileName: String, align: Int) {
+        WoosimCmd.setTextAlign(align)
         buffer.put(WoosimHelper.addImage(context, fileName))
+        if (align != WoosimCmd.ALIGN_LEFT) {
+            WoosimCmd.setTextAlign(WoosimCmd.ALIGN_LEFT)
+        }
     }
 
     override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {

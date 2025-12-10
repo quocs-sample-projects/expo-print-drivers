@@ -24,7 +24,7 @@ class Honeywell0188Driver(bluetoothService: BluetoothService, context: Context) 
         TODO("Not yet implemented")
     }
 
-    override fun addBitmapToBuffer(fileName: String) {
+    override fun addBitmapToBuffer(fileName: String, align: Int) {
         TODO("Not yet implemented")
     }
 
