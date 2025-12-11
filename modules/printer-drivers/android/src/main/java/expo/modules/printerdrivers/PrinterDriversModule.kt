@@ -204,19 +204,19 @@ class PrinterDriversModule : Module() {
             }
         }
 
-        fun printHandler(usingDriver: BaseDriver, printFunction: () -> Unit) {
-            usingDriver.clearBuffer()
-            usingDriver.initPrinter()
-            printFunction()
-            usingDriver.sendPrintData()
+        fun printHandler(driver: BaseDriver, printTicketFunction: () -> Unit) {
+            driver.clearBuffer()
+            driver.initPrinter()
+            printTicketFunction()
+            driver.sendPrintData()
         }
 
         Function("testGiayBaoTienNuoc") { printerType: String, jsonData: ReadableMap ->
             try {
                 val usingDriver = getDriver(printerType)
                 printHandler(
-                    usingDriver = usingDriver,
-                    printFunction = { usingDriver.testGiayBaoTienNuoc(jsonData) }
+                    driver = usingDriver,
+                    printTicketFunction = { usingDriver.testGiayBaoTienNuoc(jsonData) }
                 )
             } catch (err: Error) {
                 Log.e(TAG, "--> Error in testGiayBaoTienNuoc: $err")
