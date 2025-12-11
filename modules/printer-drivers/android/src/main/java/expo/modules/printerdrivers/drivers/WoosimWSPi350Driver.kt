@@ -11,7 +11,6 @@ class WoosimWSPi350Driver(
 ) : BaseDriver(bluetoothService, context) {
     override var driverName: String = "WoosimWSPi350Driver"
     override var printerPageWidth: Int = 36
-    override var separateLineLength: Int = 36
 
     override fun initPrinter() {
         buffer.put(WoosimCmd.initPrinter())
@@ -76,32 +75,5 @@ class WoosimWSPi350Driver(
         if (align != WoosimCmd.ALIGN_LEFT) {
             WoosimCmd.setTextAlign(WoosimCmd.ALIGN_LEFT)
         }
-    }
-
-    override fun addTwoAlignedStringsToBuffer(
-        leftString: String,
-        rightString: String,
-        leftBold: Boolean,
-        rightBold: Boolean,
-        leftDoubleHeight: Boolean,
-        rightDoubleHeight: Boolean
-    ) {
-        addAlignedStringToBuffer(leftString, WoosimCmd.ALIGN_LEFT, leftBold, leftDoubleHeight)
-        addAlignedStringToBuffer(rightString, WoosimCmd.ALIGN_RIGHT, rightBold, rightDoubleHeight)
-    }
-
-    override fun addSeparateLineToBuffer() {
-        buffer.put(CommonHelper.createSeparatorLine(separateLineLength))
-    }
-
-    override fun addThreeAlignedStringsToBuffer(
-        leftString: String,
-        middleString: String,
-        rightString: String,
-        leftBold: Boolean,
-        middleBold: Boolean,
-        rightBold: Boolean
-    ) {
-        TODO("Not yet implemented")
     }
 }

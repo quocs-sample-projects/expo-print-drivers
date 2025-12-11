@@ -23,7 +23,6 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     BaseDriver(bluetoothService, context) {
     override var driverName = "HoneywellPR3Driver"
     override var printerPageWidth: Int = 44
-    override var separateLineLength: Int = 44
     var imageHeadWidth: Int = 576 // in dots
 
     private fun wrapTextToWidth(text: String, paint: Paint, maxWidth: Float): List<String> {
@@ -248,17 +247,16 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         bitmap.recycle()
     }
 
-    override fun addSeparateLineToBuffer() {
-        addAlignedStringToBuffer("-".repeat(separateLineLength), WoosimCmd.ALIGN_CENTER)
-    }
-
     override fun addThreeAlignedStringsToBuffer(
         leftString: String,
         middleString: String,
         rightString: String,
         leftBold: Boolean,
         middleBold: Boolean,
-        rightBold: Boolean
+        rightBold: Boolean,
+        leftDoubleHeight: Boolean,
+        middleDoubleHeight: Boolean,
+        rightDoubleHeight: Boolean,
     ) {
         TODO("Not yet implemented")
     }

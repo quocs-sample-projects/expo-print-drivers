@@ -16,10 +16,9 @@ abstract class BaseDriver(
     var buffer: ByteBuffer = ByteBuffer.allocate(50 * KB)
     abstract var driverName: String
     abstract var printerPageWidth: Int
-    abstract var separateLineLength: Int
 
-    abstract fun addSeparateLineToBuffer()
     abstract fun initPrinter()
+
     abstract fun addAlignedStringToBuffer(
         string: String,
         align: Int = WoosimCmd.ALIGN_LEFT,
@@ -27,26 +26,41 @@ abstract class BaseDriver(
         doubleFontSize: Boolean = false
     )
 
-    abstract fun addTwoAlignedStringsToBuffer(
+    abstract fun addBitmapToBuffer(fileName: String, align: Int = WoosimCmd.ALIGN_CENTER)
+
+    abstract fun addLineFeedsToBuffer(lineNumber: Int = 1)
+
+    open fun addTwoAlignedStringsToBuffer(
         leftString: String,
         rightString: String,
         leftBold: Boolean = false,
         rightBold: Boolean = false,
         leftDoubleHeight: Boolean = false,
         rightDoubleHeight: Boolean = false,
-    )
+    ){
+        addAlignedStringToBuffer(leftString, WoosimCmd.ALIGN_LEFT, leftBold, leftDoubleHeight)
+        addAlignedStringToBuffer(rightString, WoosimCmd.ALIGN_RIGHT, rightBold, rightDoubleHeight)
+    }
 
-    abstract fun addThreeAlignedStringsToBuffer(
+    open fun addThreeAlignedStringsToBuffer(
         leftString: String,
         middleString: String,
         rightString: String,
         leftBold: Boolean = false,
         middleBold: Boolean = false,
         rightBold: Boolean = false,
-    )
+        leftDoubleHeight: Boolean = false,
+        middleDoubleHeight: Boolean = false,
+        rightDoubleHeight: Boolean = false,
+    ){
+        addAlignedStringToBuffer(leftString, WoosimCmd.ALIGN_LEFT, leftBold, leftDoubleHeight)
+        addAlignedStringToBuffer(middleString, WoosimCmd.ALIGN_CENTER, middleBold, middleDoubleHeight)
+        addAlignedStringToBuffer(rightString, WoosimCmd.ALIGN_RIGHT, rightBold, rightDoubleHeight)
+    }
 
-    abstract fun addBitmapToBuffer(fileName: String, align: Int = WoosimCmd.ALIGN_LEFT)
-    abstract fun addLineFeedsToBuffer(lineNumber: Int = 1)
+    fun addSeparateLineToBuffer() {
+        addAlignedStringToBuffer("-".repeat(printerPageWidth), WoosimCmd.ALIGN_CENTER)
+    }
 
     fun clearBuffer() {
         buffer.clear()
@@ -125,7 +139,7 @@ abstract class BaseDriver(
         addAlignedStringToBuffer(
             "Quét mã QR để thanh toán MOMO\n", WoosimCmd.ALIGN_CENTER, bold = true
         )
-        addBitmapToBuffer(maQR, WoosimCmd.ALIGN_CENTER)
+        addBitmapToBuffer(maQR)
         addLineFeedsToBuffer(3)
     }
 }
