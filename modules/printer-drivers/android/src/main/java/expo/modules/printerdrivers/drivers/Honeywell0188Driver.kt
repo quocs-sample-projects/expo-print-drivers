@@ -1,8 +1,6 @@
 package expo.modules.printerdrivers.drivers
 
 import android.content.Context
-import com.facebook.react.bridge.ReadableMap
-import android.util.Log
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
 
 class Honeywell0188Driver(bluetoothService: BluetoothService, context: Context) :
@@ -47,7 +45,14 @@ class Honeywell0188Driver(bluetoothService: BluetoothService, context: Context) 
         TODO("Not yet implemented")
     }
 
-    override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {
-        Log.d(driverName, "--> giayBaoTienNuocGiaDinhVer1: $jsonData")
+    override fun addThreeAlignedStringsToBuffer(
+        leftString: String,
+        middleString: String,
+        rightString: String,
+        leftBold: Boolean,
+        middleBold: Boolean,
+        rightBold: Boolean
+    ) {
+        TODO("Not yet implemented")
     }
 }

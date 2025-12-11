@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import com.woosim.printer.WoosimCmd
 import com.woosim.printer.WoosimImage
-import expo.modules.printerdrivers.utils.constants.PrinterPageSize
 import java.io.File
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -49,7 +48,7 @@ object WoosimHelper {
         str2: String = "",
         bold: Boolean = false,
         doubleHeight: Boolean = false,
-        len: Int = PrinterPageSize.width + 1,
+        len: Int,
         charset: Charset = StandardCharsets.UTF_8,
     ): ByteArray {
         val estimatedSize = 64 + str1.toByteArray(charset).size + str2.toByteArray(charset).size
@@ -126,7 +125,7 @@ object WoosimHelper {
         leftString: String,
         middleString: String,
         rightString: String,
-        len: Int = PrinterPageSize.width,
+        len: Int,
         leftBold: Boolean = false,
         middleBold: Boolean = false,
         rightBold: Boolean = false,

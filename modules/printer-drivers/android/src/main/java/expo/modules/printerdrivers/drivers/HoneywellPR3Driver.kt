@@ -7,15 +7,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
-import com.facebook.react.bridge.ReadableMap
 import com.woosim.printer.WoosimCmd
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
 import expo.modules.printerdrivers.utils.constants.PR3Command
 import honeywell.printer.DocumentLP
 import java.io.File
 import androidx.core.graphics.createBitmap
-import expo.modules.printerdrivers.utils.constants.PrinterCharacter
-import expo.modules.printerdrivers.utils.helpers.CommonHelper.getStringValueByKey
+
+private object FontSize {
+    const val NORMAL = 24f
+    const val DOUBLE = 32f
+}
 
 class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     BaseDriver(bluetoothService, context) {
@@ -23,10 +25,6 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
     override var printerPageWidth: Int = 44
     override var separateLineLength: Int = 44
     var imageHeadWidth: Int = 576 // in dots
-
-    override fun initPrinter() {
-        buffer.put(PR3Command.INIT)
-    }
 
     private fun wrapTextToWidth(text: String, paint: Paint, maxWidth: Float): List<String> {
         val lines = mutableListOf<String>()
@@ -40,18 +38,15 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
             if (testWidth <= maxWidth) {
                 currentLine = StringBuilder(testLine)
             } else {
-                // Current line is full, save it and start new line
                 if (currentLine.isNotEmpty()) {
                     lines.add(currentLine.toString())
                     currentLine = StringBuilder(word)
                 } else {
-                    // Single word is too long, need to break it
                     lines.add(word)
                 }
             }
         }
 
-        // Add the last line
         if (currentLine.isNotEmpty()) {
             lines.add(currentLine.toString())
         }
@@ -66,7 +61,7 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         val paint = Paint().apply {
             color = Color.BLACK
             isAntiAlias = false // Sharper text for thermal printers
-            textSize = if (doubleFontSize) 32f else 24f
+            textSize = if (doubleFontSize) FontSize.DOUBLE else FontSize.NORMAL
             typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
 
@@ -108,101 +103,6 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         return bitmap
     }
 
-    override fun addAlignedStringToBuffer(
-        string: String, align: Int, bold: Boolean, doubleFontSize: Boolean
-    ) {
-        val text = string.trimEnd('\n')
-        if (text.isEmpty()) return
-
-        // Render text as bitmap with proper alignment
-        val bitmap = createTextBitmap(text, align, bold, doubleFontSize)
-
-        val docLP = DocumentLP("!")
-        docLP.writeImage(bitmap, imageHeadWidth)
-        buffer.put(docLP.documentData)
-
-        bitmap.recycle()
-    }
-
-    override fun addBitmapToBuffer(fileName: String, align: Int) {
-        val docLP = DocumentLP("!")
-
-        try {
-            val qrImagePath = "${context.cacheDir}/$fileName"
-            val imageFile = File(qrImagePath)
-
-            if (imageFile.exists()) {
-                val originalBitmap = BitmapFactory.decodeFile(qrImagePath)
-                if (originalBitmap != null) {
-                    // Create aligned bitmap wrapper
-                    val alignedBitmap = createAlignedBitmap(originalBitmap, align)
-                    docLP.writeImage(alignedBitmap, imageHeadWidth)
-                    alignedBitmap.recycle()
-                    originalBitmap.recycle()
-                } else {
-                    docLP.writeText("ERROR: Failed to decode image")
-                }
-            } else {
-                docLP.writeText("ERROR: $fileName not found")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            docLP.writeText("ERROR: ${e.message}")
-        }
-
-        buffer.put(docLP.documentData)
-    }
-
-    private fun createAlignedBitmap(originalBitmap: Bitmap, align: Int): Bitmap {
-        // Create a full-width bitmap with white background
-        val alignedBitmap = createBitmap(imageHeadWidth, originalBitmap.height)
-        val canvas = Canvas(alignedBitmap)
-        canvas.drawColor(Color.WHITE)
-
-        // Calculate x position based on alignment
-        val x = when (align) {
-            WoosimCmd.ALIGN_CENTER -> ((imageHeadWidth - originalBitmap.width) / 2).toFloat()
-            WoosimCmd.ALIGN_RIGHT -> (imageHeadWidth - originalBitmap.width).toFloat()
-            else -> 0f // Left aligned
-        }
-
-        // Draw the original bitmap at the calculated position
-        canvas.drawBitmap(originalBitmap, x, 0f, null)
-
-        return alignedBitmap
-    }
-
-    override fun addLineFeedsToBuffer(lineNumber: Int) {
-        for (i in 1..lineNumber) {
-            buffer.put(PR3Command.NEW_LINE)
-        }
-    }
-
-    override fun addTwoAlignedStringsToBuffer(
-        leftString: String,
-        rightString: String,
-        leftBold: Boolean,
-        rightBold: Boolean,
-        leftDoubleHeight: Boolean,
-        rightDoubleHeight: Boolean,
-    ) {
-        val leftText = leftString.trimEnd('\n')
-        val rightText = rightString.trimEnd('\n')
-
-        if (leftText.isEmpty() && rightText.isEmpty()) return
-
-        // Create a combined bitmap with both texts
-        val bitmap = createTwoAlignedTextBitmap(
-            leftText, rightText, leftBold, rightBold, leftDoubleHeight, rightDoubleHeight
-        )
-
-        val docLP = DocumentLP("!")
-        docLP.writeImage(bitmap, imageHeadWidth)
-        buffer.put(docLP.documentData)
-
-        bitmap.recycle()
-    }
-
     private fun createTwoAlignedTextBitmap(
         leftText: String,
         rightText: String,
@@ -215,14 +115,14 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         val leftPaint = Paint().apply {
             color = Color.BLACK
             isAntiAlias = false
-            textSize = if (leftDoubleSize) 32f else 24f
+            textSize = if (leftDoubleSize) FontSize.DOUBLE else FontSize.NORMAL
             typeface = if (leftBold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
 
         val rightPaint = Paint().apply {
             color = Color.BLACK
             isAntiAlias = false
-            textSize = if (rightDoubleSize) 32f else 24f
+            textSize = if (rightDoubleSize) FontSize.DOUBLE else FontSize.NORMAL
             typeface = if (rightBold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
 
@@ -255,75 +155,111 @@ class HoneywellPR3Driver(bluetoothService: BluetoothService, context: Context) :
         return bitmap
     }
 
+    private fun createAlignedBitmap(originalBitmap: Bitmap, align: Int): Bitmap {
+        val alignedBitmap = createBitmap(imageHeadWidth, originalBitmap.height)
+        val canvas = Canvas(alignedBitmap)
+        canvas.drawColor(Color.WHITE)
+
+        // Calculate x position based on alignment
+        val x = when (align) {
+            WoosimCmd.ALIGN_CENTER -> ((imageHeadWidth - originalBitmap.width) / 2).toFloat()
+            WoosimCmd.ALIGN_RIGHT -> (imageHeadWidth - originalBitmap.width).toFloat()
+            else -> 0f // Left aligned
+        }
+        canvas.drawBitmap(originalBitmap, x, 0f, null)
+
+        return alignedBitmap
+    }
+
+    override fun initPrinter() {
+        buffer.put(PR3Command.INIT)
+    }
+
+    /**
+     * Because we can't align normal texts, we have to print them as bitmaps so that we can align them
+     * .When printing "text image" like this. We don't have to add "\n" to the end of the string to add new line
+     * ,the current text will automatically add new line after printing
+     */
+    override fun addAlignedStringToBuffer(
+        string: String, align: Int, bold: Boolean, doubleFontSize: Boolean
+    ) {
+        val text = string.trimEnd('\n')
+        if (text.isEmpty()) return
+
+        val bitmap = createTextBitmap(text, align, bold, doubleFontSize)
+        val docLP = DocumentLP("!")
+        docLP.writeImage(bitmap, imageHeadWidth)
+        buffer.put(docLP.documentData)
+        bitmap.recycle()
+    }
+
+    override fun addBitmapToBuffer(fileName: String, align: Int) {
+        val docLP = DocumentLP("!")
+        try {
+            val qrImagePath = "${context.cacheDir}/$fileName"
+            val imageFile = File(qrImagePath)
+            if (imageFile.exists()) {
+                val originalBitmap = BitmapFactory.decodeFile(qrImagePath)
+                if (originalBitmap != null) {
+                    val alignedBitmap = createAlignedBitmap(originalBitmap, align)
+                    docLP.writeImage(alignedBitmap, imageHeadWidth)
+                    alignedBitmap.recycle()
+                    originalBitmap.recycle()
+                } else {
+                    docLP.writeText("ERROR: Failed to decode image")
+                }
+            } else {
+                docLP.writeText("ERROR: $fileName not found")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            docLP.writeText("ERROR: ${e.message}")
+        }
+        buffer.put(docLP.documentData)
+    }
+
+    override fun addLineFeedsToBuffer(lineNumber: Int) {
+        repeat(lineNumber) {
+            buffer.put(PR3Command.NEW_LINE)
+
+        }
+    }
+
+    override fun addTwoAlignedStringsToBuffer(
+        leftString: String,
+        rightString: String,
+        leftBold: Boolean,
+        rightBold: Boolean,
+        leftDoubleHeight: Boolean,
+        rightDoubleHeight: Boolean,
+    ) {
+        val leftText = leftString.trimEnd('\n')
+        val rightText = rightString.trimEnd('\n')
+
+        if (leftText.isEmpty() && rightText.isEmpty()) return
+
+        val bitmap = createTwoAlignedTextBitmap(
+            leftText, rightText, leftBold, rightBold, leftDoubleHeight, rightDoubleHeight
+        )
+
+        val docLP = DocumentLP("!")
+        docLP.writeImage(bitmap, imageHeadWidth)
+        buffer.put(docLP.documentData)
+        bitmap.recycle()
+    }
+
     override fun addSeparateLineToBuffer() {
         addAlignedStringToBuffer("-".repeat(separateLineLength), WoosimCmd.ALIGN_CENTER)
     }
 
-    override fun giayBaoTienNuocNongThon(jsonData: ReadableMap) {
-        val tenCongTy = getStringValueByKey(jsonData, "tenCongTy")
-        val tenPhieu = getStringValueByKey(jsonData, "tenPhieu")
-        val ky = getStringValueByKey(jsonData, "ky")
-        val tuNgay = getStringValueByKey(jsonData, "tuNgay")
-        val denNgay = getStringValueByKey(jsonData, "denNgay")
-        val mdb = getStringValueByKey(jsonData, "mdb")
-        val mlt = getStringValueByKey(jsonData, "mlt")
-        val khachHang = getStringValueByKey(jsonData, "khachHang")
-        val soDienThoai = getStringValueByKey(jsonData, "soDienThoai")
-        val diaChi = getStringValueByKey(jsonData, "diaChi")
-        val giaBieu = getStringValueByKey(jsonData, "giaBieu")
-        val dinhMuc = getStringValueByKey(jsonData, "dinhMuc")
-        val chiSo = getStringValueByKey(jsonData, "chiSo")
-        val tienNuoc = getStringValueByKey(jsonData, "tienNuoc")
-        val tienKyMoi = getStringValueByKey(jsonData, "tienKyMoi")
-        val nhanVien = getStringValueByKey(jsonData, "nhanVien")
-        val dienThoaiNhanVien = getStringValueByKey(jsonData, "dienThoaiNhanVien")
-        val maQR = getStringValueByKey(jsonData, "maQR")
-
-
-        addSeparateLineToBuffer()
-        addAlignedStringToBuffer(
-            tenCongTy, WoosimCmd.ALIGN_CENTER, bold = true
-        )
-        addSeparateLineToBuffer()
-        addAlignedStringToBuffer(
-            tenPhieu, WoosimCmd.ALIGN_CENTER, bold = true, doubleFontSize = true
-        )
-        addAlignedStringToBuffer("KỲ: $ky", WoosimCmd.ALIGN_CENTER, bold = true)
-        addAlignedStringToBuffer("$tuNgay - $denNgay", WoosimCmd.ALIGN_CENTER)
-        addAlignedStringToBuffer("DB: $mdb - MLT: $mlt", bold = true)
-        addAlignedStringToBuffer("KH: $khachHang", bold = true)
-        addAlignedStringToBuffer("Điện thoại KH: $soDienThoai")
-        addAlignedStringToBuffer("ĐC: $diaChi")
-        addAlignedStringToBuffer("Giá biểu: $giaBieu - Định mức: $dinhMuc")
-        addTwoAlignedStringsToBuffer(
-            leftString = "Chỉ số lala",
-            rightString = "$chiSo ${PrinterCharacter.M3}",
-            rightBold = true
-        )
-        addTwoAlignedStringsToBuffer(
-            leftString = "Tiền hehe",
-            rightString = "$tienNuoc ${PrinterCharacter.VND}",
-            rightBold = true
-        )
-        addAlignedStringToBuffer("-".repeat(10), WoosimCmd.ALIGN_RIGHT)
-        addTwoAlignedStringsToBuffer(
-            leftString = "Số tiền (kỳ mới)",
-            rightString = "$tienKyMoi ${PrinterCharacter.VND}",
-            rightBold = true
-        )
-        addSeparateLineToBuffer()
-        addAlignedStringToBuffer("NV: $nhanVien", bold = true)
-        addAlignedStringToBuffer("ĐT: $dienThoaiNhanVien", bold = true)
-        addAlignedStringToBuffer("Sau 3 ngày làm việc, kể từ ngày ghi chỉ số nước, dữ liệu hoá đơn sẽ được cập nhật tại website:")
-        addAlignedStringToBuffer("https://www.example.com", bold = true)
-        addAlignedStringToBuffer("Quý khách vui lòng kiểm tra lại số điện thoại trên phiếu báo này và liên hệ đội làm giàu:")
-        addAlignedStringToBuffer("(0123) 456789 để cập nhật lại nếu chưa chính xác.")
-        addLineFeedsToBuffer()
-        addAlignedStringToBuffer(
-            "Quét mã QR để thanh toán MOMO", WoosimCmd.ALIGN_CENTER, bold = true
-        )
-        addBitmapToBuffer(maQR, WoosimCmd.ALIGN_CENTER)
-
-        addLineFeedsToBuffer(2)
+    override fun addThreeAlignedStringsToBuffer(
+        leftString: String,
+        middleString: String,
+        rightString: String,
+        leftBold: Boolean,
+        middleBold: Boolean,
+        rightBold: Boolean
+    ) {
+        TODO("Not yet implemented")
     }
 }

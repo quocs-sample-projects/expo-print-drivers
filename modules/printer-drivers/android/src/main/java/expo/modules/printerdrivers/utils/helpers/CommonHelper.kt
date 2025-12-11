@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 object CommonHelper {
     fun createSeparatorLine(length: Int): ByteArray {
         var line = "-".repeat(length)
-        line += "\n"
+        // line += "\n"
         return line.toByteArray()
     }
 
