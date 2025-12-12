@@ -13,6 +13,11 @@ npx expo-doctor
 # Run project
 
 ```bash
+# With npx
 npx expo run:android # or `npx expo run:ios`
 npx expo start
+
+# With custom commands in package.json
+pnpm android
+pnpm start
 ```
