@@ -45,5 +45,6 @@ android {
 dependencies {
     implementation("com.facebook.react:react-native")
     implementation files('libs/WoosimLib262.jar')
+    implementation files('libs/printer_library.jar')
     implementation files('libs/DO_AndroidSDK_v2.4.9.aar')
 }
