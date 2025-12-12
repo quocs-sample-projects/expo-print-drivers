@@ -7,12 +7,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import androidx.core.graphics.createBitmap
 import com.woosim.printer.WoosimCmd
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
 import expo.modules.printerdrivers.utils.constants.PR3Command
 import honeywell.printer.DocumentLP
 import java.io.File
-import androidx.core.graphics.createBitmap
 
 private object FontSize {
     const val NORMAL = 24f

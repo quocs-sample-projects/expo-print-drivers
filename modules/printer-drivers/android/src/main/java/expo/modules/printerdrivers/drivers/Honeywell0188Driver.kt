@@ -1,7 +1,6 @@
 package expo.modules.printerdrivers.drivers
 
 import android.content.Context
-import com.woosim.printer.WoosimCmd
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
 
 class Honeywell0188Driver(bluetoothService: BluetoothService, context: Context) :

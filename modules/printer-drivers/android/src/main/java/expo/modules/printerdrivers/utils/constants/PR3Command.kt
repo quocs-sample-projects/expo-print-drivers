@@ -5,7 +5,7 @@ object PR3Command {
     private const val EM = 0x21.toByte() // ! (Exclamation Mark)
     private const val NLL = 0x00.toByte() // NULL
     private const val CR = 0x0d.toByte() // Carriage Return
-    
+
     val INIT = byteArrayOf(
         NLL, NLL, NLL, NLL,
         ESC, 0x40,

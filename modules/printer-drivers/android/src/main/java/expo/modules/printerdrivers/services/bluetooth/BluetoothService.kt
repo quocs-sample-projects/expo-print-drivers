@@ -284,7 +284,11 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
                 try {
                     socket?.close()
                 } catch (e2: IOException) {
-                    Log.e(TAG, "--> unable to close() $socketType socket during connection failure", e2)
+                    Log.e(
+                        TAG,
+                        "--> unable to close() $socketType socket during connection failure",
+                        e2
+                    )
                 }
                 connectionFailed()
                 return
@@ -363,7 +367,7 @@ class BluetoothService private constructor(private val eventHandler: BluetoothEv
                     break
                 }
             }
-            
+
             Log.i(TAG, "--> END mConnectedThread")
         }
 

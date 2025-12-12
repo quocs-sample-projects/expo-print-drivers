@@ -40,7 +40,11 @@ object CommonHelper {
         return if (strToCheck.isEmpty() || strToCheck.isBlank()) replacement else strToCheck
     }
 
-    fun getStringValueByKey(readableMap: ReadableMap, key: String?, replaceValue: String? = null): String {
+    fun getStringValueByKey(
+        readableMap: ReadableMap,
+        key: String?,
+        replaceValue: String? = null
+    ): String {
         val replacement = replaceValue ?: ""
         if (key != null && readableMap.hasKey(key)) {
             return when (readableMap.getType(key)) {

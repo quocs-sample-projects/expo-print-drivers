@@ -136,7 +136,10 @@ object WoosimHelper {
         val middle = middleString.trim { it <= ' ' }
         val right = rightString.trim { it <= ' ' }
 
-        val estimatedSize = 64 + left.toByteArray(charset).size + middle.toByteArray(charset).size + right.toByteArray(charset).size
+        val estimatedSize =
+            64 + left.toByteArray(charset).size + middle.toByteArray(charset).size + right.toByteArray(
+                charset
+            ).size
         val buffer = ByteBuffer.allocate(estimatedSize)
 
         try {

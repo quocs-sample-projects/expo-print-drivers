@@ -15,7 +15,9 @@ object EscPosCommand {
         // Send multiple LF characters
         return ByteArray(n) { LF }
     }
-    fun FEED_DOTS(n: Int) = byteArrayOf(ESC, 'J'.code.toByte(), n.toByte())  // ESC J n - feed n dots
+
+    fun FEED_DOTS(n: Int) =
+        byteArrayOf(ESC, 'J'.code.toByte(), n.toByte())  // ESC J n - feed n dots
 
     // Character set selection
     fun SET_CODE_PAGE(page: Int) = byteArrayOf(ESC, 't'.code.toByte(), page.toByte())
@@ -114,9 +116,39 @@ object EscPosCommand {
     }
 
     // QR code
-    val QR_MODEL = byteArrayOf(GS, '('.code.toByte(), 'k'.code.toByte(), 4.toByte(), 0.toByte(), 49.toByte(), 65.toByte(), 50.toByte(), 0.toByte())
-    fun QR_SIZE(size: Int) = byteArrayOf(GS, '('.code.toByte(), 'k'.code.toByte(), 3.toByte(), 0.toByte(), 49.toByte(), 67.toByte(), size.toByte())
-    fun QR_ERROR_CORRECTION(level: Int) = byteArrayOf(GS, '('.code.toByte(), 'k'.code.toByte(), 3.toByte(), 0.toByte(), 49.toByte(), 69.toByte(), (48 + level).toByte())
+    val QR_MODEL = byteArrayOf(
+        GS,
+        '('.code.toByte(),
+        'k'.code.toByte(),
+        4.toByte(),
+        0.toByte(),
+        49.toByte(),
+        65.toByte(),
+        50.toByte(),
+        0.toByte()
+    )
+
+    fun QR_SIZE(size: Int) = byteArrayOf(
+        GS,
+        '('.code.toByte(),
+        'k'.code.toByte(),
+        3.toByte(),
+        0.toByte(),
+        49.toByte(),
+        67.toByte(),
+        size.toByte()
+    )
+
+    fun QR_ERROR_CORRECTION(level: Int) = byteArrayOf(
+        GS,
+        '('.code.toByte(),
+        'k'.code.toByte(),
+        3.toByte(),
+        0.toByte(),
+        49.toByte(),
+        69.toByte(),
+        (48 + level).toByte()
+    )
 
     const val QR_LEVEL_L = 0
     const val QR_LEVEL_M = 1
@@ -126,11 +158,29 @@ object EscPosCommand {
     fun QR_STORE_DATA(data: ByteArray): ByteArray {
         val pL = ((data.size + 3) and 0xFF).toByte()
         val pH = (((data.size + 3) shr 8) and 0xFF).toByte()
-        val header = byteArrayOf(GS, '('.code.toByte(), 'k'.code.toByte(), pL, pH, 49.toByte(), 80.toByte(), 48.toByte())
+        val header = byteArrayOf(
+            GS,
+            '('.code.toByte(),
+            'k'.code.toByte(),
+            pL,
+            pH,
+            49.toByte(),
+            80.toByte(),
+            48.toByte()
+        )
         return header + data
     }
 
-    val QR_PRINT = byteArrayOf(GS, '('.code.toByte(), 'k'.code.toByte(), 3.toByte(), 0.toByte(), 49.toByte(), 81.toByte(), 48.toByte())
+    val QR_PRINT = byteArrayOf(
+        GS,
+        '('.code.toByte(),
+        'k'.code.toByte(),
+        3.toByte(),
+        0.toByte(),
+        49.toByte(),
+        81.toByte(),
+        48.toByte()
+    )
 
     // Status
     val REAL_TIME_STATUS = byteArrayOf(16.toByte(), 4.toByte(), 1.toByte())

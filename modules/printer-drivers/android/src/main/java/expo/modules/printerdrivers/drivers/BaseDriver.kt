@@ -37,7 +37,7 @@ abstract class BaseDriver(
         rightBold: Boolean = false,
         leftDoubleHeight: Boolean = false,
         rightDoubleHeight: Boolean = false,
-    ){
+    ) {
         addAlignedStringToBuffer(leftString, WoosimCmd.ALIGN_LEFT, leftBold, leftDoubleHeight)
         addAlignedStringToBuffer(rightString, WoosimCmd.ALIGN_RIGHT, rightBold, rightDoubleHeight)
     }
@@ -52,9 +52,14 @@ abstract class BaseDriver(
         leftDoubleHeight: Boolean = false,
         middleDoubleHeight: Boolean = false,
         rightDoubleHeight: Boolean = false,
-    ){
+    ) {
         addAlignedStringToBuffer(leftString, WoosimCmd.ALIGN_LEFT, leftBold, leftDoubleHeight)
-        addAlignedStringToBuffer(middleString, WoosimCmd.ALIGN_CENTER, middleBold, middleDoubleHeight)
+        addAlignedStringToBuffer(
+            middleString,
+            WoosimCmd.ALIGN_CENTER,
+            middleBold,
+            middleDoubleHeight
+        )
         addAlignedStringToBuffer(rightString, WoosimCmd.ALIGN_RIGHT, rightBold, rightDoubleHeight)
     }
 
@@ -95,7 +100,7 @@ abstract class BaseDriver(
         val nhanVien = getStringValueByKey(jsonData, "nhanVien")
         val dienThoaiNhanVien = getStringValueByKey(jsonData, "dienThoaiNhanVien")
         val maQR = getStringValueByKey(jsonData, "maQR")
-        
+
         addSeparateLineToBuffer()
         addAlignedStringToBuffer(
             "$tenCongTy\n", WoosimCmd.ALIGN_CENTER, bold = true
