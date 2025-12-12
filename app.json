@@ -1,13 +1,10 @@
 {
   "expo": {
-    "name": "expo-print-drivers",
+    "name": "Expo print drivers",
     "slug": "expo-print-drivers",
     "version": "1.0.0",
     "orientation": "portrait",
-    "platforms": [
-      "android",
-      "ios"
-    ],
+    "platforms": ["android", "ios"],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
