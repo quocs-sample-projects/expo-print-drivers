@@ -20,6 +20,7 @@ import { styles, colors } from "./App.styles";
 import { isEmpty, isEqual } from "lodash";
 import { FileHelper } from "./utils/helpers";
 import PrinterDriversModule from "../modules/printer-drivers/src/PrinterDriversModule";
+import { TIME_UNITS } from "./utils/constants";
 
 const MA_QR =
   "https://drive.google.com/uc?export=download&id=1zJtXeNPdzZHqr6rzdoBXekNdk9pDfThj";
@@ -48,6 +49,7 @@ const testPrinterData = {
 
 export default function App() {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
+  const [printDisabled, setPrintDisabled] = useState<boolean>(false);
 
   const {
     granted,
@@ -144,6 +146,7 @@ export default function App() {
       usingDriver = PrinterDriversModule.PrinterType.HONEYWELL_0188;
     }
 
+    setPrintDisabled(true);
     if (usingDriver) {
       TicketPrinter.testGiayBaoTienNuoc(usingDriver, testPrinterData);
     } else {
@@ -152,6 +155,9 @@ export default function App() {
         "Unsupported printer model for test print."
       );
     }
+    setTimeout(() => {
+      setPrintDisabled(false);
+    }, TIME_UNITS.SECOND * 2);
   };
 
   const renderHeader = () => (
@@ -278,10 +284,11 @@ export default function App() {
           {isThisDeviceConnected && (
             <TouchableOpacity
               style={[
-                styles.connectButton,
-                { backgroundColor: colors.primary },
+                { ...styles.connectButton, backgroundColor: colors.primary },
+                printDisabled && styles.connectButtonDisabled,
               ]}
               onPress={handlePrint}
+              disabled={printDisabled}
             >
               <Text style={styles.connectButtonText}>Print</Text>
             </TouchableOpacity>
