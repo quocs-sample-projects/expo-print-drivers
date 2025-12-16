@@ -2,7 +2,7 @@
   "expo": {
     "name": "Expo print drivers",
     "slug": "expo-print-drivers",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "platforms": ["android", "ios"],
     "icon": "./assets/icon.png",
@@ -14,12 +14,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "2",
+      "buildNumber": "3",
       "supportsTablet": true,
       "bundleIdentifier": "com.hoangquoc2106.expoprintdrivers"
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
