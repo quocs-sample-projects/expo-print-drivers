@@ -24,7 +24,7 @@ declare class PrinterDriversModule extends NativeModule<PrinterDriversModuleEven
   getPairedDevices(): Promise<BluetoothDevice[]>;
   connect(address: string, secure: boolean): Promise<void>;
   disconnect(): Promise<void>;
-  testGiayBaoTienNuoc(printerType: string, jsonData: object): void;
+  giayBaoTienNuocBenThanh(printerType: string, jsonData: object): void;
 }
 
 // This call loads the native module object from the JSI.

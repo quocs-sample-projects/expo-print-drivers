@@ -215,11 +215,11 @@ class PrinterDriversModule : Module() {
             }
         }
 
-        Function("testGiayBaoTienNuoc") { printerType: String, jsonData: ReadableMap ->
+        Function("giayBaoTienNuocBenThanh") { printerType: String, jsonData: ReadableMap ->
             val usingDriver = getDriver(printerType)
             printHandler(
                 driver = usingDriver,
-                printTicketFunction = { usingDriver.testGiayBaoTienNuoc(jsonData) }
+                printTicketFunction = { usingDriver.giayBaoTienNuocBenThanh(jsonData) }
             )
         }
     }

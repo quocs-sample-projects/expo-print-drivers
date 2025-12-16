@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { ReactNode, use, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Button,
   ScrollView,
@@ -23,32 +23,32 @@ import PrinterDriversModule from "../modules/printer-drivers/src/PrinterDriversM
 import { TIME_UNITS } from "./utils/constants";
 
 const MA_QR =
-  "https://drive.google.com/uc?export=download&id=1zJtXeNPdzZHqr6rzdoBXekNdk9pDfThj";
+  "https://drive.google.com/uc?export=download&id=1FCei2L9FDxxN4I7qKz_36aBFJoamtI4Z";
 
 const testPrinterData = {
-  tenCongTy: "CTY CỔ PHẦN CẤP NƯỚC CẤP CẤP",
-  tenPhieu: "PHIẾU BÁO CHỈ SỐ ĐOM ĐÓM",
-  ky: "12/2025",
-  tuNgay: "04/11/2025",
-  denNgay: "04/12/2025",
-  mdb: "0123456789",
-  mlt: "0123456789",
-  khachHang: "NGUYỄN VĂN A",
-  soDienThoai: "0123456789",
-  diaChi:
-    "123 Đường Đi Hoài Sẽ Thấy, Phường Biết Tới, Quận Rõ Ràng, TP Hiểu Rồi",
-  giaBieu: "21",
-  dinhMuc: "69",
-  chiSo: "1600",
-  tienNuoc: "3000",
-  tienKyMoi: "2169",
-  nhanVien: "Trần Văn A",
-  dienThoaiNhanVien: "0987654321",
-  maQR: "ma_qr.png",
-  chiSoMoi: "1669",
-  chiSoCu: "1600",
-  tieuThu: "123",
-  tongCong: "456789",
+  tenCongTy: "CTY CỔ PHẦN CẤP NƯỚC THỦ ĐỨC",
+  tenPhieu: "PHIẾU BÁO CHỈ SỐ VÀ TIỀN NƯỚC",
+  ky: "06/2025",
+  tuNgay: "14/05/2025",
+  denNgay: "13/06/2025",
+  mdb: "16143500798",
+  mlt: "091218000",
+  khachHang: "CHU VAN TAN",
+  soDienThoai: "0969189026",
+  diaChi: "10 DUONG 55-KP3, PHUONG CAT LAI, THANH PHO HO CHI MINH, VIET NAM",
+  giaBieu: "15",
+  dinhMuc: "0",
+  chiSoMoi: "957",
+  chiSoCu: "935",
+  tieuThu: "22",
+  tienNuoc: "468.600",
+  thueVat: "24.430",
+  dvtn: "140.580",
+  vatDvtn: "11.246",
+  tienKyMoi: "643.856",
+  nhanVien: "VŨ HOÀNG QUỐC VIỆT",
+  dienThoaiNhanVien: "0933445442",
+  maQR: "qr-code.png",
 };
 
 export default function App() {
@@ -96,11 +96,11 @@ export default function App() {
   }, [status]);
 
   useEffect(() => {
-    const qrExists = FileHelper.checkFileExists("ma_qr.png");
+    const qrExists = FileHelper.checkFileExists("qr-code.png");
     if (!qrExists) {
-      FileHelper.downloadFile(MA_QR, "ma_qr.png");
+      FileHelper.downloadFile(MA_QR, "qr-code.png");
     } else {
-      console.log("--> QR file URI:", FileHelper.getFileUri("ma_qr.png"));
+      console.log("--> QR file URI:", FileHelper.getFileUri("qr-code.png"));
     }
   }, []);
 
@@ -152,7 +152,7 @@ export default function App() {
 
     setPrintDisabled(true);
     if (usingDriver) {
-      TicketPrinter.testGiayBaoTienNuoc(usingDriver, testPrinterData);
+      TicketPrinter.giayBaoTienNuocBenThanh(usingDriver, testPrinterData);
     } else {
       Alert.alert(
         "Printing Error",

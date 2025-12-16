@@ -54,8 +54,10 @@ abstract class BaseDriver(
         rightDoubleHeight: Boolean = false,
     )
 
-    fun addSeparateLineToBuffer() {
-        addAlignedStringToBuffer("${"-".repeat(separateLineLength)}\n", bold = true)
+    fun addSeparateLineToBuffer(
+        lineLength: Int = separateLineLength, align: Int = WoosimCmd.ALIGN_LEFT
+    ) {
+        addAlignedStringToBuffer("${"-".repeat(lineLength)}\n", align, bold = true)
     }
 
     open fun clearBuffer() {
@@ -70,7 +72,7 @@ abstract class BaseDriver(
         bluetoothService.write(data)
     }
 
-    fun testGiayBaoTienNuoc(jsonData: ReadableMap) {
+    fun giayBaoTienNuocBenThanh(jsonData: ReadableMap) {
         val tenCongTy = getStringValueByKey(jsonData, "tenCongTy")
         val tenPhieu = getStringValueByKey(jsonData, "tenPhieu")
         val ky = getStringValueByKey(jsonData, "ky")
@@ -83,77 +85,54 @@ abstract class BaseDriver(
         val diaChi = getStringValueByKey(jsonData, "diaChi")
         val giaBieu = getStringValueByKey(jsonData, "giaBieu")
         val dinhMuc = getStringValueByKey(jsonData, "dinhMuc")
-        val chiSo = getStringValueByKey(jsonData, "chiSo")
+        val chiSoMoi = getStringValueByKey(jsonData, "chiSoMoi")
+        val chiSoCu = getStringValueByKey(jsonData, "chiSoCu")
+        val tieuThu = getStringValueByKey(jsonData, "tieuThu")
         val tienNuoc = getStringValueByKey(jsonData, "tienNuoc")
+        val thueVat = getStringValueByKey(jsonData, "thueVat")
+        val dvtn = getStringValueByKey(jsonData, "dvtn")
+        val vatDvtn = getStringValueByKey(jsonData, "vatDvtn")
         val tienKyMoi = getStringValueByKey(jsonData, "tienKyMoi")
         val nhanVien = getStringValueByKey(jsonData, "nhanVien")
         val dienThoaiNhanVien = getStringValueByKey(jsonData, "dienThoaiNhanVien")
         val maQR = getStringValueByKey(jsonData, "maQR")
-        val chiSoMoi = getStringValueByKey(jsonData, "chiSoMoi")
-        val chiSoCu = getStringValueByKey(jsonData, "chiSoCu")
-        val tieuThu = getStringValueByKey(jsonData, "tieuThu")
-        val tongCong = getStringValueByKey(jsonData, "tongCong")
 
-        addAlignedStringToBuffer("$driverName\n", bold = true)
+        addAlignedStringToBuffer(driverName)
+        addLineFeedsToBuffer()
+
+        addAlignedStringToBuffer("$tenCongTy\n", WoosimCmd.ALIGN_CENTER, bold = true)
         addSeparateLineToBuffer()
         addAlignedStringToBuffer(
-            "$tenCongTy\n", WoosimCmd.ALIGN_CENTER, bold = true
+            "$tenPhieu\n",
+            WoosimCmd.ALIGN_CENTER,
+            bold = true,
+            doubleFontSize = true
         )
-        addSeparateLineToBuffer()
-        addAlignedStringToBuffer(
-            "$tenPhieu\n", WoosimCmd.ALIGN_CENTER, bold = true, doubleFontSize = true
-        )
-        addAlignedStringToBuffer("KỲ: $ky\n", WoosimCmd.ALIGN_CENTER, bold = true)
-        addAlignedStringToBuffer("$tuNgay - $denNgay\n", WoosimCmd.ALIGN_CENTER)
-        addAlignedStringToBuffer("DB: $mdb - MLT: $mlt\n", bold = true)
-        addAlignedStringToBuffer("KH: $khachHang\n", bold = true)
+        addAlignedStringToBuffer("KỲ $ky\n", WoosimCmd.ALIGN_CENTER, bold = true)
+        addAlignedStringToBuffer("($tuNgay - $denNgay)\n", WoosimCmd.ALIGN_CENTER)
+        addAlignedStringToBuffer("DB: $mdb - MLT: $mlt\n")
+        addAlignedStringToBuffer("KH: $khachHang\n")
         addAlignedStringToBuffer("Điện thoại KH: $soDienThoai\n")
         addAlignedStringToBuffer("ĐC: $diaChi\n")
         addAlignedStringToBuffer("Giá biểu: $giaBieu - Định mức: $dinhMuc\n")
-        addTwoAlignedStringsToBuffer(
-            leftString = "Chỉ số lala",
-            rightString = "$chiSo ${PrinterCharacter.M3}\n",
-            rightBold = true
-        )
-        addTwoAlignedStringsToBuffer(
-            leftString = "Tiền hehe",
-            rightString = "$tienNuoc ${PrinterCharacter.VND}\n",
-            rightBold = true
-        )
-        addAlignedStringToBuffer("${"-".repeat(10)}\n", WoosimCmd.ALIGN_RIGHT)
-        addTwoAlignedStringsToBuffer(
-            leftString = "Số tiền (kỳ mới)",
-            rightString = "$tienKyMoi ${PrinterCharacter.VND}\n",
-            rightBold = true
-        )
+        addTwoAlignedStringsToBuffer("Chỉ số mới:", "$chiSoMoi ${PrinterCharacter.M3}\n")
+        addTwoAlignedStringsToBuffer("Chỉ số cũ:", "$chiSoCu ${PrinterCharacter.M3}\n")
+        addTwoAlignedStringsToBuffer("Tiêu thụ:", "$tieuThu ${PrinterCharacter.M3}\n")
+        addTwoAlignedStringsToBuffer("Tiền nước:", "$tienNuoc ${PrinterCharacter.VND}\n")
+        addTwoAlignedStringsToBuffer("Thuế VAT (5%):", "$thueVat ${PrinterCharacter.VND}\n")
+        addTwoAlignedStringsToBuffer("DVTN (30%):", "$dvtn ${PrinterCharacter.VND}\n")
+        addTwoAlignedStringsToBuffer("VAT DVTN (8%):", "$vatDvtn ${PrinterCharacter.VND}\n")
+        addSeparateLineToBuffer(15, WoosimCmd.ALIGN_RIGHT)
+        addTwoAlignedStringsToBuffer("Số tiền (Kỳ mới):", "$tienKyMoi ${PrinterCharacter.VND}\n")
         addSeparateLineToBuffer()
-        addThreeAlignedStringsToBuffer(
-            "Chỉ số cũ", chiSoCu, "${PrinterCharacter.M3}\n", leftBold = true
-        )
-        addThreeAlignedStringsToBuffer(
-            "Chỉ số mới", chiSoMoi, "${PrinterCharacter.M3}\n", middleBold = true
-        )
-        addThreeAlignedStringsToBuffer(
-            "Tiêu thụ: ", tieuThu, "${PrinterCharacter.M3}\n", rightBold = true
-        )
-        addThreeAlignedStringsToBuffer(
-            "Tổng cộng: ",
-            tongCong,
-            "${PrinterCharacter.VND}\n",
-            leftBold = true,
-            middleBold = true,
-            rightBold = true
-        )
-        addSeparateLineToBuffer()
-        addAlignedStringToBuffer("NV: $nhanVien\n", bold = true)
-        addAlignedStringToBuffer("ĐT: $dienThoaiNhanVien\n", bold = true)
-        addAlignedStringToBuffer("Sau 3 ngày làm việc, kể từ ngày ghi chỉ số nước, dữ liệu hoá đơn sẽ được cập nhật tại website:\n")
-        addAlignedStringToBuffer("https://www.example.com\n", bold = true)
-        addAlignedStringToBuffer("Quý khách vui lòng kiểm tra lại số điện thoại trên phiếu báo này và liên hệ đội làm giàu:\n")
-        addAlignedStringToBuffer("(0123) 456789 để cập nhật lại nếu chưa chính xác.\n")
-        addLineFeedsToBuffer()
+        addAlignedStringToBuffer("-NV: $nhanVien\n")
+        addAlignedStringToBuffer("-ĐT: $dienThoaiNhanVien\n")
+        addAlignedStringToBuffer("Sau 3 ngày làm việc, kể từ ngày ghi chỉ số nước, dữ liệu hoá đơn sẽ được cập nhật . tại website:\n")
+        addAlignedStringToBuffer("www.capnuocthuduc.com\n")
+        addAlignedStringToBuffer("Quý khách vui lòng kiểm tra lại số điện thoại trên phiếu báo này liên hệ đội QLGTN:\n")
+        addAlignedStringToBuffer("(028) 38.001.002 để cập nhật lại nếu chưa chính xác.")
         addAlignedStringToBuffer(
-            "Quét mã QR để thanh toán MOMO\n", WoosimCmd.ALIGN_CENTER, bold = true
+            "Quét mã QR để thanh toán\n", WoosimCmd.ALIGN_CENTER, bold = true
         )
         addBitmapToBuffer(maQR)
 

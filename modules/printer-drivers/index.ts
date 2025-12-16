@@ -19,7 +19,7 @@ export const BluetoothService = {
 };
 
 export const TicketPrinter = {
-  testGiayBaoTienNuoc(printerType: string, jsonData: object) {
-    PrinterDriversModeule.testGiayBaoTienNuoc(printerType, jsonData);
+  giayBaoTienNuocBenThanh(printerType: string, jsonData: object) {
+    PrinterDriversModeule.giayBaoTienNuocBenThanh(printerType, jsonData);
   },
 };
