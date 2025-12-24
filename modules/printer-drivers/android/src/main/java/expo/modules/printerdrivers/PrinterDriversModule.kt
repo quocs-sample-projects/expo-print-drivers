@@ -143,19 +143,22 @@ class PrinterDriversModule : Module() {
         )
 
         // Expose constants
-        Constants(
-            "PrinterType" to mapOf(
+        Constant("PrinterType") {
+            return@Constant mapOf(
                 "WOOSIM_WSP_i350" to PrinterType.WOOSIM_WSP_i350,
                 "HONEYWELL_0188" to PrinterType.HONEYWELL_0188,
                 "HONEYWELL_PR3" to PrinterType.HONEYWELL_PR3
-            ),
-            "BluetoothConnectionState" to mapOf(
+            )
+        }
+
+        Constant("BluetoothConnectionState") {
+            return@Constant mapOf(
                 "NONE" to BluetoothConnectionState.NONE,
                 "LISTEN" to BluetoothConnectionState.LISTEN,
                 "CONNECTING" to BluetoothConnectionState.CONNECTING,
                 "CONNECTED" to BluetoothConnectionState.CONNECTED
             )
-        )
+        }
 
         Function("getBluetoothState") {
             bluetoothService.getState()
