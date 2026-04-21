@@ -110,11 +110,11 @@ export const HomeScreen = () => {
   const handlePrint = () => {
     const deviceName = status.connectedDevice?.name.toLowerCase() ?? "";
     let usingDriver: string | null = null;
-    if (deviceName.includes("woosim")) {
+    if (deviceName.includes("woosim") || deviceName.includes("wsp-")) {
       usingDriver = PrinterType.WOOSIM_WSP_i350;
     } else if (deviceName.includes("pr3")) {
       usingDriver = PrinterType.HONEYWELL_PR3;
-    } else if (deviceName.includes("mpd31d")) {
+    } else if (deviceName.includes("mpd31d") || deviceName.includes("0188")) {
       usingDriver = PrinterType.HONEYWELL_0188;
     }
 

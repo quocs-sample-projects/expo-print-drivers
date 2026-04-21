@@ -27,9 +27,12 @@ export function useBluetoothPermissions() {
     if (Platform.OS === "android") {
       checkPermissions();
     } else {
-      // iOS doesn't support Classic Bluetooth, so permissions are not applicable
+      // iOS uses MFi / ExternalAccessory — there is no runtime permission to
+      // request. Access is granted once the user pairs the accessory in
+      // Settings > Bluetooth and the app declares the matching protocol
+      // strings in UISupportedExternalAccessoryProtocols (Info.plist).
       setPermissionStatus({
-        granted: false,
+        granted: true,
         canAskAgain: false,
         loading: false,
       });
@@ -45,10 +48,10 @@ export function useBluetoothPermissions() {
       if (apiLevel >= 31) {
         // Android 12 and above - need runtime permissions
         const connectGranted = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
         );
         const scanGranted = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
         );
 
         setPermissionStatus({
@@ -71,7 +74,7 @@ export function useBluetoothPermissions() {
       } else {
         Alert.alert(
           "Error checking Bluetooth state:",
-          "An unknown error occurred"
+          "An unknown error occurred",
         );
       }
       setPermissionStatus({
@@ -84,8 +87,14 @@ export function useBluetoothPermissions() {
 
   const requestPermissions = async (): Promise<boolean> => {
     if (Platform.OS !== "android") {
-      Alert.alert("Not Supported", "Classic Bluetooth is not supported on iOS");
-      return false;
+      // iOS MFi has no runtime permission prompt. Pairing happens in system
+      // Settings; treat as granted here so downstream flows proceed.
+      setPermissionStatus({
+        granted: true,
+        canAskAgain: false,
+        loading: false,
+      });
+      return true;
     }
 
     setPermissionStatus((prev) => ({ ...prev, loading: true }));
@@ -133,7 +142,7 @@ export function useBluetoothPermissions() {
         Alert.alert(
           "Permissions Required",
           "Bluetooth permissions are required to connect to devices. Please grant them in your device settings.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
       }
 
@@ -144,7 +153,7 @@ export function useBluetoothPermissions() {
       } else {
         Alert.alert(
           "Error checking Bluetooth state:",
-          "An unknown error occurred"
+          "An unknown error occurred",
         );
       }
       setPermissionStatus({
