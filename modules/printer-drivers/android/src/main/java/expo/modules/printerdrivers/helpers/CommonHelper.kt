@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.helpers
+package expo.modules.printerdrivers.helpers
 
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType

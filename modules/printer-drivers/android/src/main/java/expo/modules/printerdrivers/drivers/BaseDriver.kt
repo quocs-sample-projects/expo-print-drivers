@@ -1,12 +1,12 @@
 package expo.modules.printerdrivers.drivers
 
 import android.content.Context
+import com.facebook.common.util.ByteConstants.KB
 import com.facebook.react.bridge.ReadableMap
 import com.woosim.printer.WoosimCmd
+import expo.modules.printerdrivers.constants.PrinterCharacter
+import expo.modules.printerdrivers.helpers.CommonHelper.getStringValueByKey
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
-import expo.modules.printerdrivers.utils.constants.MemoryUnit.KB
-import expo.modules.printerdrivers.utils.constants.PrinterCharacter
-import expo.modules.printerdrivers.utils.helpers.CommonHelper.getStringValueByKey
 import java.nio.ByteBuffer
 
 abstract class BaseDriver(

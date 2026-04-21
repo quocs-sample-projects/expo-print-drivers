@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.constants
+package expo.modules.printerdrivers.constants
 
 object PrinterType {
     var WOOSIM_WSP_i350 = "WOOSIM_WSP_i350"

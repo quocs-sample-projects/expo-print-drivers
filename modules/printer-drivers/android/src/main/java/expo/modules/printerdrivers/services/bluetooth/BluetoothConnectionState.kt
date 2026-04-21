@@ -1,8 +1,5 @@
 package expo.modules.printerdrivers.services.bluetooth
 
-/**
- * Constants that indicate the current bluetooth connection state
- */
 object BluetoothConnectionState {
     const val NONE = 0
     const val LISTEN = 1

@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.constants
+package expo.modules.printerdrivers.constants
 
 object PR3Command {
     private const val ESC = 0x1b.toByte() // ESC

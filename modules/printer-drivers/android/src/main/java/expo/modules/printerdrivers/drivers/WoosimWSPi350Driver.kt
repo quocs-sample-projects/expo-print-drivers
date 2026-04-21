@@ -2,9 +2,9 @@ package expo.modules.printerdrivers.drivers
 
 import android.content.Context
 import com.woosim.printer.WoosimCmd
+import expo.modules.printerdrivers.helpers.CommonHelper
+import expo.modules.printerdrivers.helpers.WoosimHelper
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
-import expo.modules.printerdrivers.utils.helpers.CommonHelper
-import expo.modules.printerdrivers.utils.helpers.WoosimHelper
 
 class WoosimWSPi350Driver(
     bluetoothService: BluetoothService, context: Context
@@ -21,7 +21,7 @@ class WoosimWSPi350Driver(
         string: String, align: Int, bold: Boolean, doubleFontSize: Boolean
     ) {
         var actualString = string
-        if(align == WoosimCmd.ALIGN_RIGHT){
+        if (align == WoosimCmd.ALIGN_RIGHT) {
             actualString = actualString.trimEnd('\n') + " \n"
         }
         val wrappedString = CommonHelper.createWrappedString(actualString, printerPageWidth)

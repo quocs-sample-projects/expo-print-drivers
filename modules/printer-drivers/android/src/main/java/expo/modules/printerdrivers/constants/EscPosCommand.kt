@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.constants
+package expo.modules.printerdrivers.constants
 
 object EscPosCommand {
     private val ESC = 0x1B.toByte()

@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.helpers
+package expo.modules.printerdrivers.helpers
 
 import java.text.SimpleDateFormat
 import java.util.Date

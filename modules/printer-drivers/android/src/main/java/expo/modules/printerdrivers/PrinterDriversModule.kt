@@ -15,6 +15,7 @@ import com.facebook.react.bridge.ReadableMap
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import expo.modules.printerdrivers.constants.PrinterType
 import expo.modules.printerdrivers.drivers.BaseDriver
 import expo.modules.printerdrivers.drivers.Honeywell0188Driver
 import expo.modules.printerdrivers.drivers.HoneywellPR3Driver
@@ -22,7 +23,6 @@ import expo.modules.printerdrivers.drivers.WoosimWSPi350Driver
 import expo.modules.printerdrivers.services.bluetooth.BluetoothConnectionState
 import expo.modules.printerdrivers.services.bluetooth.BluetoothEventHandler
 import expo.modules.printerdrivers.services.bluetooth.BluetoothService
-import expo.modules.printerdrivers.utils.constants.PrinterType
 
 class PrinterDriversModule : Module() {
     companion object {
@@ -77,7 +77,10 @@ class PrinterDriversModule : Module() {
             if (state == BluetoothAdapter.STATE_ON || state == BluetoothAdapter.STATE_OFF) {
                 val isAvailable = bluetoothAdapter != null
                 val isEnabled = bluetoothAdapter?.isEnabled == true
-                Log.d(TAG, "--> onBluetoothStateChanged: available=$isAvailable, enabled=$isEnabled")
+                Log.d(
+                    TAG,
+                    "--> onBluetoothStateChanged: available=$isAvailable, enabled=$isEnabled"
+                )
                 sendEvent(
                     "onBluetoothStateChanged",
                     mapOf(

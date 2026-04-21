@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.helpers
+package expo.modules.printerdrivers.helpers
 
 import android.content.Context
 import android.graphics.BitmapFactory

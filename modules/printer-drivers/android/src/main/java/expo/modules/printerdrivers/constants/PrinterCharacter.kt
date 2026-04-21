@@ -1,4 +1,4 @@
-package expo.modules.printerdrivers.utils.constants
+package expo.modules.printerdrivers.constants
 
 object PrinterCharacter {
     const val VND = "đ"
