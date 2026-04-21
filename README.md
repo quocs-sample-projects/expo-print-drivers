@@ -2,22 +2,36 @@
 
 ```bash
 npx create-expo-app --template blank-typescript
-pnpm install
-pnpm add dev-client
-pnpm add expo-system-ui
+bun install
+npx expo install dev-client
+npx expo install expo-system-ui
+npx expo install sharp-cli
+
 npx create-expo-module <module_name> --local
-pnpm add ./modules/<module_name>
 npx expo-doctor
 ```
 
 # Run project
 
 ```bash
-# With npx
-npx expo run:android # or `npx expo run:ios`
-npx expo start
+fnm use
 
-# With custom commands in package.json
-pnpm android
-pnpm start
+bun install
+
+npx expo prebuild --clean
+
+npx expo run:android # or `npx expo run:ios`
+
+npx expo start
+```
+
+# Using local module
+
+```typescript
+// If your file is in /src/components/MyScreen.tsx
+// and your module is in /modules/my-native-module/index.ts
+import MyNativeModule from "../../modules/my-native-module";
+
+// Use it like this:
+const result = MyNativeModule.hello();
 ```
