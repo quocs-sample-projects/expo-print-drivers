@@ -15,7 +15,12 @@
     "ios": {
       "buildNumber": "5",
       "supportsTablet": true,
-      "bundleIdentifier": "com.hoangquoc2106.expoprintdrivers"
+      "bundleIdentifier": "com.hoangquoc2106.expoprintdrivers",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Used to connect to printers over Bluetooth.",
+        "NSBluetoothPeripheralUsageDescription": "Used to connect to printers over Bluetooth.",
+        "UISupportedExternalAccessoryProtocols": ["com.woosim.wspr240"]
+      }
     },
     "android": {
       "versionCode": 5,

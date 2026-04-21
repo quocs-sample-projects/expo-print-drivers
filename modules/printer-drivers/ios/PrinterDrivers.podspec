@@ -13,10 +13,16 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
+  s.vendored_libraries = "vendor/woosim302/libwoosim302.a"
+  s.preserve_paths     = "vendor/woosim302/libwoosim302.a", "vendor/woosim302/woosim302.swiftmodule"
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
+    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)/vendor',
+    'OTHER_LDFLAGS'       => '$(inherited) -lwoosim302',
+    # Required because the SDK ships an objc category on NSData/NSString internally
+    'OTHER_SWIFT_FLAGS'   => '$(inherited) -Xcc -fmodules'
   }
 
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"

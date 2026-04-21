@@ -1,0 +1,246 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.6 (swiftlang-5.6.0.323.62 clang-1316.0.20.8)
+// swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name woosim302
+import Foundation
+import Swift
+import UIKit
+import _Concurrency
+@_inheritsConvenienceInitializers @objc open class WSCmd : ObjectiveC.NSObject {
+  @objc public enum CutType : Swift.UInt8 {
+    case full = 0x00
+    case partial = 0x01
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum FontSize : Swift.UInt8 {
+    case Large = 0x00
+    case Medium = 0x01
+    case Small = 0x02
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum AlignType : Swift.UInt8 {
+    case Left = 0x00
+    case Center = 0x01
+    case Right = 0x02
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum BarcodeType : Swift.UInt8 {
+    case UPCA = 0x41
+    case UPCE = 0x42
+    case EAN13 = 0x43
+    case EAN8 = 0x44
+    case Code39 = 0x45
+    case ITF = 0x46
+    case Codabar = 0x47
+    case Code93 = 0x48
+    case Code128 = 0x49
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum GS1DatabarType : Swift.UInt8 {
+    case Omnidirectional = 0x00
+    case Truncated = 0x01
+    case Stacked = 0x02
+    case StackedOmnidirectional = 0x03
+    case Limited = 0x04
+    case Expanded = 0x05
+    case ExpandedStacked = 0x06
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum PageDirection : Swift.UInt8 {
+    case LeftToRight = 0x00
+    case BottomToTop = 0x01
+    case RightToLeft = 0x02
+    case TopToBottom = 0x03
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum McuType : Swift.UInt8 {
+    case M16C, ARM, RX
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public enum Charset : Swift.UInt8 {
+    case CP437 = 0
+    case Katakana = 1
+    case CP850 = 2
+    case CP860 = 3
+    case CP863 = 4
+    case CP865 = 5
+    case CP852 = 6
+    case CP857 = 7
+    case CP737 = 8
+    case CP866 = 9
+    case CP862 = 10
+    case CP775 = 11
+    case Polish = 12
+    case ISO8859_15 = 13
+    case Win1252 = 14
+    case CP858 = 15
+    case CP855 = 16
+    case Win1251 = 17
+    case Win1250 = 18
+    case Win1253 = 19
+    case Win1254 = 20
+    case Win1255 = 21
+    case Win1258 = 22
+    case Win1257 = 23
+    case Azerbaijani = 24
+    case CP874 = 30
+    case CP720 = 40
+    case Win1256 = 41
+    case Farsi = 42
+    case ArabicPFB = 43
+    case Hindi = 50
+    case DBCS = 0xFF
+    public init?(rawValue: Swift.UInt8)
+    public typealias RawValue = Swift.UInt8
+    public var rawValue: Swift.UInt8 {
+      get
+    }
+  }
+  @objc public static func initPrinter() -> Foundation.Data
+  @objc public static func printData() -> Foundation.Data
+  @objc public static func printFeed(dot: Swift.UInt8) -> Foundation.Data
+  @objc public static func printFeed(line: Swift.UInt8) -> Foundation.Data
+  @objc public static func setPageMode() -> Foundation.Data
+  @objc public static func cutPaper(_ mode: woosim302.WSCmd.CutType) -> Foundation.Data
+  @objc public static func saveFeedLengthFromMark(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func feedToMark() -> Foundation.Data
+  @objc public static func openCashDrawer() -> Foundation.Data
+  @objc public static func requestStatus() -> Foundation.Data
+  @objc public static func requestBatteryStatus() -> Foundation.Data
+  @objc public static func requestDeviceName() -> Foundation.Data
+  @objc public static func requestDeviceVersion() -> Foundation.Data
+  @objc public static func setCodeTable(_ charset: woosim302.WSCmd.Charset, mcu: woosim302.WSCmd.McuType) -> Foundation.Data
+  @objc public static func alignText(_ mode: woosim302.WSCmd.AlignType) -> Foundation.Data
+  @objc public static func alignContent(_ mode: woosim302.WSCmd.AlignType) -> Foundation.Data
+  @objc public static func setFontSize(_ size: woosim302.WSCmd.FontSize) -> Foundation.Data
+  @objc public static func extendFont(width: Swift.UInt8, height: Swift.UInt8) -> Foundation.Data
+  @objc public static func setBold(_ enable: Swift.Bool) -> Foundation.Data
+  @objc public static func setUnderline(_ enable: Swift.Bool) -> Foundation.Data
+  @objc public static func setReverse(_ enable: Swift.Bool) -> Foundation.Data
+  @objc public static func setCharSpace(_ dotSize: Swift.UInt8) -> Foundation.Data
+  @objc public static func setLineSpace(_ dotSize: Swift.UInt8) -> Foundation.Data
+  @objc public static func resetLineSpace() -> Foundation.Data
+  @objc public static func setUpsideDown(_ enable: Swift.Bool) -> Foundation.Data
+  @objc public static func moveAbsPosition(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func moveRelPosition(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func setLeftMargin(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func setPrintingWidth(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func selectTTF(_ filename: Swift.String) -> Foundation.Data
+  @objc public static func writeTTF(_ text: Swift.String, width: Swift.UInt8, height: Swift.UInt8) -> Foundation.Data
+  @objc public static func setBarcodeWidth(_ width: Swift.UInt8) -> Foundation.Data
+  @objc public static func setBarcodeHeight(_ height: Swift.UInt8) -> Foundation.Data
+  @objc public static func setBarcodeHri(_ enable: Swift.Bool) -> Foundation.Data
+  @objc public static func writeBarcode(data: [Swift.UInt8], type: woosim302.WSCmd.BarcodeType) -> Foundation.Data
+  @objc public static func writeBarcode(_ string: Swift.String, type: woosim302.WSCmd.BarcodeType) -> Foundation.Data
+  @objc public static func writeGS1Databar(_ string: Swift.String, type: woosim302.WSCmd.GS1DatabarType, segment: Swift.UInt8) -> Foundation.Data
+  @objc public static func writePDF417(_ data: Foundation.Data, column: Swift.UInt8, secureLevel: Swift.UInt8, ratio: Swift.UInt8) -> Foundation.Data
+  @objc public static func writeDataMatrix(_ data: Foundation.Data, height: Swift.UInt8, width: Swift.UInt8, size: Swift.UInt8) -> Foundation.Data
+  @objc public static func writeQRcode(_ data: Foundation.Data, version: Swift.UInt8, ecLevel: Swift.String, size: Swift.UInt8) -> Foundation.Data
+  @objc public static func writeMicroPDF417(_ data: Foundation.Data, column: Swift.UInt8, row: Swift.UInt8, ratio: Swift.UInt8) -> Foundation.Data
+  @objc public static func writeTruncatedPDF417(_ data: Foundation.Data, column: Swift.UInt8, secureLevel: Swift.UInt8, ratio: Swift.UInt8) -> Foundation.Data
+  @objc public static func writeMaxicode(_ data: Foundation.Data, mode: Swift.UInt8) -> Foundation.Data
+  @objc public static func pageModeToStdMode() -> Foundation.Data
+  @objc public static func pageModePrintData() -> Foundation.Data
+  @objc public static func pageModePrintStdMode() -> Foundation.Data
+  @objc public static func pageModeDeleteData() -> Foundation.Data
+  @objc public static func pageModeSetArea(x: Swift.UInt16, y: Swift.UInt16, width: Swift.UInt16, height: Swift.UInt16) -> Foundation.Data
+  @objc public static func pageModeSetDirection(_ direction: woosim302.WSCmd.PageDirection) -> Foundation.Data
+  @objc public static func pageModeSetPosition(x: Swift.UInt16, y: Swift.UInt16) -> Foundation.Data
+  @objc public static func pageModeMoveAbsVertical(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func pageModeMoveRelVertical(_ dotSize: Swift.UInt16) -> Foundation.Data
+  @objc public static func setMsrMode1stTrack() -> Foundation.Data
+  @objc public static func setMsrMode2ndTrack() -> Foundation.Data
+  @objc public static func setMsrModeDoubleTrack() -> Foundation.Data
+  @objc public static func setMsrModeTripleTrack() -> Foundation.Data
+  @objc public static func setMsrMode3rdTrack() -> Foundation.Data
+  @objc public static func exitMsrMode() -> Foundation.Data
+  @objc public static func setScrMode() -> Foundation.Data
+  @objc public static func exitScrMode() -> Foundation.Data
+  @objc public static func setNonSecureScrMode() -> Foundation.Data
+  @objc public static func exitNonSecureScrMode() -> Foundation.Data
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc open class WSPacket : ObjectiveC.NSObject {
+  @objc public enum PacketType : Swift.UInt {
+    case BINARY, STRING, MSR
+    public init?(rawValue: Swift.UInt)
+    public typealias RawValue = Swift.UInt
+    public var rawValue: Swift.UInt {
+      get
+    }
+  }
+  @objc public var packetType: woosim302.WSPacket.PacketType {
+    get
+  }
+  @objc public var packetData: Any {
+    get
+  }
+  @objc public init(_ rcvData: Foundation.Data)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc open class WSImage : ObjectiveC.NSObject {
+  @objc public static func drawLine(x1: Swift.UInt16, y1: Swift.UInt16, x2: Swift.UInt16, y2: Swift.UInt16, thick: Swift.UInt8) -> Foundation.Data
+  @objc public static func drawRect(x: Swift.UInt16, y: Swift.UInt16, width: Swift.UInt16, height: Swift.UInt16, thick: Swift.UInt8) -> Foundation.Data
+  @objc public static func drawEllipse(x: Swift.UInt16, y: Swift.UInt16, radiusW: Swift.UInt16, radiusH: Swift.UInt16, thick: Swift.UInt8) -> Foundation.Data
+  @objc public static func drawImage(_ image: UIKit.UIImage, x: Swift.UInt16, y: Swift.UInt16, dithering: Swift.Bool, compress: Swift.Bool) -> Foundation.Data
+  @objc public static func printStoredImage(index: Swift.UInt8) -> Foundation.Data
+  @objc public static func adjustImage(_ image: UIKit.UIImage, brightness: Swift.Float, contrast: Swift.Float) -> UIKit.UIImage?
+  @objc public static func printImage(_ image: UIKit.UIImage, dithering: Swift.Bool, compress: Swift.Bool) -> Foundation.Data
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension woosim302.WSCmd.CutType : Swift.Equatable {}
+extension woosim302.WSCmd.CutType : Swift.Hashable {}
+extension woosim302.WSCmd.CutType : Swift.RawRepresentable {}
+extension woosim302.WSCmd.FontSize : Swift.Equatable {}
+extension woosim302.WSCmd.FontSize : Swift.Hashable {}
+extension woosim302.WSCmd.FontSize : Swift.RawRepresentable {}
+extension woosim302.WSCmd.AlignType : Swift.Equatable {}
+extension woosim302.WSCmd.AlignType : Swift.Hashable {}
+extension woosim302.WSCmd.AlignType : Swift.RawRepresentable {}
+extension woosim302.WSCmd.BarcodeType : Swift.Equatable {}
+extension woosim302.WSCmd.BarcodeType : Swift.Hashable {}
+extension woosim302.WSCmd.BarcodeType : Swift.RawRepresentable {}
+extension woosim302.WSCmd.GS1DatabarType : Swift.Equatable {}
+extension woosim302.WSCmd.GS1DatabarType : Swift.Hashable {}
+extension woosim302.WSCmd.GS1DatabarType : Swift.RawRepresentable {}
+extension woosim302.WSCmd.PageDirection : Swift.Equatable {}
+extension woosim302.WSCmd.PageDirection : Swift.Hashable {}
+extension woosim302.WSCmd.PageDirection : Swift.RawRepresentable {}
+extension woosim302.WSCmd.McuType : Swift.Equatable {}
+extension woosim302.WSCmd.McuType : Swift.Hashable {}
+extension woosim302.WSCmd.McuType : Swift.RawRepresentable {}
+extension woosim302.WSCmd.Charset : Swift.Equatable {}
+extension woosim302.WSCmd.Charset : Swift.Hashable {}
+extension woosim302.WSCmd.Charset : Swift.RawRepresentable {}
+extension woosim302.WSPacket.PacketType : Swift.Equatable {}
+extension woosim302.WSPacket.PacketType : Swift.Hashable {}
+extension woosim302.WSPacket.PacketType : Swift.RawRepresentable {}
