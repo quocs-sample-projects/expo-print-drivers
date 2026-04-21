@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Alert, NativeEventEmitter, NativeModules } from "react-native";
+import { Alert } from "react-native";
 import PrinterDriversModule from "../PrinterDriversModule";
 
 export interface BluetoothEnabledStatus {
@@ -24,12 +24,11 @@ export function useBluetoothEnabled() {
   useEffect(() => {
     checkBluetoothState();
 
-    const eventEmitter = new NativeEventEmitter(NativeModules.ClassicBluetooth);
-    const subscription = eventEmitter.addListener(
+    const subscription = PrinterDriversModule.addListener(
       "onBluetoothStateChanged",
       () => {
         checkBluetoothState();
-      }
+      },
     );
 
     const interval = setInterval(() => {
@@ -60,7 +59,7 @@ export function useBluetoothEnabled() {
       } else {
         Alert.alert(
           "Error checking Bluetooth state:",
-          "An unknown error occurred"
+          "An unknown error occurred",
         );
       }
       setStatus({

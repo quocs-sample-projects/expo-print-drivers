@@ -3,6 +3,10 @@ package expo.modules.printerdrivers
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -60,6 +64,31 @@ class PrinterDriversModule : Module() {
 
     // Bluetooth adapter to check if bluetooth is available and enabled
     private var bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+
+    // Receiver that listens for Bluetooth adapter state changes (ON/OFF)
+    private val bluetoothStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != BluetoothAdapter.ACTION_STATE_CHANGED) return
+            val state = intent.getIntExtra(
+                BluetoothAdapter.EXTRA_STATE,
+                BluetoothAdapter.ERROR
+            )
+            // Only emit on terminal states to avoid noisy TURNING_ON/TURNING_OFF events
+            if (state == BluetoothAdapter.STATE_ON || state == BluetoothAdapter.STATE_OFF) {
+                val isAvailable = bluetoothAdapter != null
+                val isEnabled = bluetoothAdapter?.isEnabled == true
+                Log.d(TAG, "--> onBluetoothStateChanged: available=$isAvailable, enabled=$isEnabled")
+                sendEvent(
+                    "onBluetoothStateChanged",
+                    mapOf(
+                        "isAvailable" to isAvailable,
+                        "isEnabled" to isEnabled
+                    )
+                )
+            }
+        }
+    }
+    private var bluetoothStateReceiverRegistered = false
 
     // Singleton BluetoothService (first access provides the event handler)
     private val bluetoothService: BluetoothService by lazy {
@@ -125,10 +154,33 @@ class PrinterDriversModule : Module() {
         OnCreate {
             Log.d(TAG, "--> OnCreate: Starting BluetoothService")
             bluetoothService.start()
+
+            val context = appContext.reactContext
+            if (context != null && !bluetoothStateReceiverRegistered) {
+                val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    context.registerReceiver(
+                        bluetoothStateReceiver,
+                        filter,
+                        Context.RECEIVER_NOT_EXPORTED
+                    )
+                } else {
+                    context.registerReceiver(bluetoothStateReceiver, filter)
+                }
+                bluetoothStateReceiverRegistered = true
+            }
         }
 
         OnDestroy {
             Log.d(TAG, "--> OnDestroy: Stopping BluetoothService")
+            if (bluetoothStateReceiverRegistered) {
+                try {
+                    appContext.reactContext?.unregisterReceiver(bluetoothStateReceiver)
+                } catch (e: IllegalArgumentException) {
+                    Log.w(TAG, "Bluetooth state receiver already unregistered: ${e.message}")
+                }
+                bluetoothStateReceiverRegistered = false
+            }
             bluetoothService.stop()
             BluetoothService.clearInstance()
         }
@@ -140,6 +192,7 @@ class PrinterDriversModule : Module() {
             "onConnectionFailed",
             "onConnectionLost",
             "onDataReceived",
+            "onBluetoothStateChanged",
         )
 
         // Expose constants

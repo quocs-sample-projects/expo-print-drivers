@@ -10,7 +10,8 @@ public class PrinterDriversModule: Module {
             "onDeviceDisconnected",
             "onConnectionFailed",
             "onConnectionLost",
-            "onDataReceived"
+            "onDataReceived",
+            "onBluetoothStateChanged"
         )
         
         // Expose constants
