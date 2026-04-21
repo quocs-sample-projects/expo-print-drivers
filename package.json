@@ -10,9 +10,11 @@
     "prebuild": "expo prebuild --clean",
     "build:apk": "cd android && ./gradlew assembleRelease && cd ..",
     "doctor": "npx expo-doctor",
-    "add": "npx expo install",
+    "add:install": "npx expo install",
     "add:check": "npx expo install --check",
-    "fix": "npx expo install --fix"
+    "add:fix": "npx expo install --fix",
+    "project:clear": "rm -rf node_modules android ios",
+    "project:bootstrap": "bun install && bun prebuild"
   },
   "dependencies": {
     "@react-navigation/native": "^7.2.2",
