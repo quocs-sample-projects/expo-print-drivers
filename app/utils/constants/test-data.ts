@@ -1,6 +1,6 @@
 export const TEST_DATA = {
-  MA_QR:
-    "https://drive.google.com/uc?export=download&id=1FCei2L9FDxxN4I7qKz_36aBFJoamtI4Z",
+  URL_MA_QR:
+    "https://drive.google.com/uc?export=download&id=1mthBu0b358EhLCB33Shy9-hqo3bgQlPk",
   PRINT_DATA: {
     tenCongTy: "CTY CỔ PHẦN CẤP NƯỚC THỦ ĐỨC",
     tenPhieu: "PHIẾU BÁO CHỈ SỐ VÀ TIỀN NƯỚC",

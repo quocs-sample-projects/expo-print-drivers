@@ -61,11 +61,14 @@ export const HomeScreen = () => {
   }, [status]);
 
   useEffect(() => {
-    const qrExists = FileHelper.checkFileExists("qr-code.png");
+    const qrExists = FileHelper.checkFileExists(TEST_DATA.PRINT_DATA.maQR);
     if (!qrExists) {
-      FileHelper.downloadFile(TEST_DATA.MA_QR, "qr-code.png");
+      FileHelper.downloadFile(TEST_DATA.URL_MA_QR, TEST_DATA.PRINT_DATA.maQR);
     } else {
-      console.log("--> QR file URI:", FileHelper.getFileUri("qr-code.png"));
+      console.log(
+        "--> QR file URI:",
+        FileHelper.getFileUri(TEST_DATA.PRINT_DATA.maQR),
+      );
     }
   }, []);
 
@@ -121,7 +124,7 @@ export const HomeScreen = () => {
     } else {
       Alert.alert(
         "Printing Error",
-        "Unsupported printer model for test print."
+        "Unsupported printer model for test print.",
       );
     }
     setTimeout(() => {
