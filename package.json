@@ -13,7 +13,7 @@
     "add:install": "npx expo install",
     "add:check": "npx expo install --check",
     "add:fix": "npx expo install --fix",
-    "project:clear": "rm -rf node_modules android ios",
+    "project:clear": "rm -rf node_modules android ios && bun pm cache rm",
     "project:bootstrap": "bun install && bun prebuild"
   },
   "dependencies": {
