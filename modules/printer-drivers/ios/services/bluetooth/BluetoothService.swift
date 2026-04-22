@@ -83,6 +83,15 @@ final class BluetoothService: NSObject {
     }
 
     /// Stop the service and close any open session.
+    ///
+    /// iOS note: unlike Android (which closes the RFCOMM socket and drops the
+    /// Bluetooth ACL link), this only tears down the app's `EASession`. The
+    /// MFi accessory remains paired with the OS and may still appear as
+    /// connected in Settings → Bluetooth. There is no public API to force-
+    /// disconnect a paired MFi accessory — the user must power off the
+    /// printer or forget the device in Settings. The Woosim SDK also exposes
+    /// no power-off / sleep command for the WSP-i350, so this is the best we
+    /// can do at the app layer.
     func stop() {
         NSLog("[BluetoothService] --> stop")
         let wasConnected = currentState == BluetoothConnectionState.CONNECTED

@@ -2,14 +2,32 @@ import ExpoModulesCore
 import ExternalAccessory
 
 public class PrinterDriversModule: Module {
-
-    // Forwards native Bluetooth events to JS via sendEvent.
     private lazy var eventHandler: BluetoothEventHandler = ModuleEventHandler(module: self)
 
-    // Lazy singleton BluetoothService (first access wires up the event handler).
     private lazy var bluetoothService: BluetoothService = {
         BluetoothService.getInstance(eventHandler: eventHandler)
     }()
+
+    private lazy var woosimWSPi350Driver: WoosimWSPi350 = {
+        WoosimWSPi350(bluetoothService: bluetoothService)
+    }()
+
+    private func getDriver(_ printerType: String) -> BaseDriver? {
+        switch printerType {
+        case PrinterType.WOOSIM_WSP_i350:
+            return woosimWSPi350Driver
+        default:
+            NSLog("[PrinterDriversModule] --> driver not implemented on iOS: \(printerType)")
+            return nil
+        }
+    }
+
+    private func printHandler(_ driver: BaseDriver, _ printTicketFunction: () -> Void) {
+        driver.clearBuffer()
+        driver.initPrinter()
+        printTicketFunction()
+        driver.sendPrintData()
+    }
 
     public func definition() -> ModuleDefinition {
         Name("PrinterDrivers")
@@ -82,10 +100,11 @@ public class PrinterDriversModule: Module {
             self.bluetoothService.stop()
         }
 
-        // Driver-level printing is not yet implemented on iOS.
-        // Requires the Woosim (woosim302) SDK and per-vendor iOS drivers to be added.
         Function("giayBaoTienNuocBenThanh") { (_ printerType: String, _ jsonData: [String: Any]) in
-            NSLog("[PrinterDriversModule] --> giayBaoTienNuocBenThanh not implemented on iOS yet")
+            guard let driver = self.getDriver(printerType) else { return }
+            self.printHandler(driver) {
+                driver.giayBaoTienNuocBenThanh(jsonData: jsonData)
+            }
         }
     }
 }

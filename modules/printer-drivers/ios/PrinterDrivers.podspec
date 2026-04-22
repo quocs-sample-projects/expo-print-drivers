@@ -19,7 +19,10 @@ Pod::Spec.new do |s|
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
-    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)/vendor',
+    # Swift looks for <ModuleName>.swiftmodule directly inside each include
+    # path, so point at the folder that *contains* woosim302.swiftmodule.
+    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)/vendor/woosim302',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_TARGET_SRCROOT)/vendor/woosim302',
     'OTHER_LDFLAGS'       => '$(inherited) -lwoosim302',
     # Required because the SDK ships an objc category on NSData/NSString internally
     'OTHER_SWIFT_FLAGS'   => '$(inherited) -Xcc -fmodules'
