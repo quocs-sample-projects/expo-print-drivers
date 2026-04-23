@@ -19,7 +19,10 @@
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Used to connect to printers over Bluetooth.",
         "NSBluetoothPeripheralUsageDescription": "Used to connect to printers over Bluetooth.",
-        "UISupportedExternalAccessoryProtocols": ["com.woosim.wspr240"]
+        "UISupportedExternalAccessoryProtocols": [
+          "com.woosim.wspr240",
+          "com.honeywell.print"
+        ]
       }
     },
     "android": {
