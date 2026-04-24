@@ -4,7 +4,10 @@
     "slug": "expo-print-drivers",
     "version": "1.0.4",
     "orientation": "portrait",
-    "platforms": ["android", "ios"],
+    "platforms": [
+      "android",
+      "ios"
+    ],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -23,7 +26,8 @@
           "com.woosim.wspr240",
           "com.honeywell.print"
         ]
-      }
+      },
+      "appleTeamId": "N72TJ7994D"
     },
     "android": {
       "versionCode": 5,
