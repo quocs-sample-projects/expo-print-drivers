@@ -1,0 +1,6 @@
+framework module HoneywellPrinterSDK {
+  umbrella header "HoneywellPrinterSDK.h"
+
+  export *
+  module * { export * }
+}

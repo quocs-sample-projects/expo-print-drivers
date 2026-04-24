@@ -13,8 +13,13 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
-  s.vendored_libraries = "vendor/woosim302/libwoosim302.a"
-  s.preserve_paths     = "vendor/woosim302/libwoosim302.a", "vendor/woosim302/woosim302.swiftmodule"
+  s.vendored_libraries  = "vendor/woosim302/libwoosim302.a"
+  s.vendored_frameworks = "vendor/HoneywellPrinterSDK.xcframework"
+  s.preserve_paths      = "vendor/woosim302/libwoosim302.a",
+                          "vendor/woosim302/woosim302.swiftmodule",
+                          "vendor/HoneywellPrinterSDK.xcframework"
+
+  s.frameworks = 'ExternalAccessory', 'UIKit', 'Foundation'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
@@ -28,5 +33,18 @@ Pod::Spec.new do |s|
     'OTHER_SWIFT_FLAGS'   => '$(inherited) -Xcc -fmodules'
   }
 
+  # Propagate the static-library linker flags to the final app target.
+  # Without this the Release linker cannot resolve woosim302 symbols because
+  # pod_target_xcconfig settings are scoped to the Pods project only.
+  # PODS_ROOT = <repo>/ios/Pods, so ../../ brings us back to the repo root.
+  s.user_target_xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/../../modules/printer-drivers/ios/vendor/woosim302',
+    'OTHER_LDFLAGS'        => '$(inherited) -lwoosim302'
+  }
+
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
+  # Exclude any headers that live inside the vendored xcframeworks —
+  # CocoaPods must not treat SDK-internal headers as pod sources.
+  s.exclude_files = "vendor/HoneywellPrinterSDK.xcframework/**/*",
+                    "vendor/woosim302/**/*"
 end
