@@ -12,10 +12,16 @@ public class PrinterDriversModule: Module {
         WoosimWSPi350(bluetoothService: bluetoothService)
     }()
 
+    private lazy var honeywellPR3Driver: HoneywellPR3Driver = {
+        HoneywellPR3Driver(bluetoothService: bluetoothService)
+    }()
+
     private func getDriver(_ printerType: String) -> BaseDriver? {
         switch printerType {
         case PrinterType.WOOSIM_WSP_i350:
             return woosimWSPi350Driver
+        case PrinterType.HONEYWELL_PR3:
+            return honeywellPR3Driver
         default:
             NSLog("[PrinterDriversModule] --> driver not implemented on iOS: \(printerType)")
             return nil
